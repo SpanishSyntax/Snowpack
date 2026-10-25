@@ -21,7 +21,7 @@ from prism import (
     visual_len,
 )
 
-ui = UI(app_name="snowpack", icon="📓", badge_color="1;34")
+ui = UI(app_name="snowpack", icon=" 📝", badge_color="1;34")
 
 __all__ = [
     "ui",
