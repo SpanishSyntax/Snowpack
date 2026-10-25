@@ -1,7 +1,7 @@
 """Tests for frontmatter parsing, mode normalization, and typst kwargs."""
 
 from pathlib import Path
-from folio.frontmatter import normalize_mode, parse_frontmatter, build_typst_kwargs
+from snowpack.frontmatter import normalize_mode, parse_frontmatter, build_typst_kwargs
 
 
 def test_normalize_mode():

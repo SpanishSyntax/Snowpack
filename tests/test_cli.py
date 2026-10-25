@@ -1,8 +1,8 @@
-"""Tests for Folio CLI parsing and execution routing."""
+"""Tests for Snowpack CLI parsing and execution routing."""
 
 from pathlib import Path
-from folio import __version__
-from folio.cli import main
+from snowpack import __version__
+from snowpack.cli import main
 
 
 def test_cli_version(capsys):
@@ -24,7 +24,7 @@ def test_cli_init(capsys):
     ret = main(["init"])
     assert ret == 0
     captured = capsys.readouterr()
-    assert "flaker init folio" in captured.out
+    assert "flaker init snowpack" in captured.out
 
 
 def test_cli_assemble_dispatch(tmp_path: Path, monkeypatch, capsys):
@@ -46,13 +46,13 @@ def test_cli_dashboard_no_args(tmp_path: Path, monkeypatch, capsys):
     ret = main([])
     assert ret == 0
     captured = capsys.readouterr()
-    assert "FOLIO DOCUMENT & PRESENTATION COMPILER" in captured.out
+    assert "SNOWPACK DOCUMENT & PRESENTATION COMPILER" in captured.out
 
 
 def test_cli_interactive_hub_exit(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr("sys.stdin.isatty", lambda: True)
-    from folio.ui import ui
+    from snowpack.ui import ui
     monkeypatch.setattr(ui, "select", lambda title, options: "exit")
     ret = main([])
     assert ret == 0
@@ -65,7 +65,7 @@ def test_cli_interactive_hub_assemble(tmp_path: Path, monkeypatch):
     (ch / "ch1.md").write_text("# Section 1", encoding="utf-8")
 
     monkeypatch.setattr("sys.stdin.isatty", lambda: True)
-    from folio.ui import ui
+    from snowpack.ui import ui
     monkeypatch.setattr(ui, "select", lambda title, options: "assemble")
     monkeypatch.setattr(ui, "prompt", lambda title, default: default)
     monkeypatch.setattr(ui, "confirm", lambda title, default: False)

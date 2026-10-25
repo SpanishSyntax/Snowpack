@@ -20,8 +20,8 @@ result
 result-*
 .direnv/
 
-# Folio temporary artifacts
+# Snowpack temporary artifacts
 _body.typ
 _entry.typ
-_folio_template.typ
+_snowpack_template.typ
 *.pdf

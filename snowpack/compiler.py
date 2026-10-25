@@ -1,4 +1,4 @@
-"""Document compiler pipelines for Folio (Typst direct, LaTeX/Tectonic, and Markdown)."""
+"""Document compiler pipelines for Snowpack (Typst direct, LaTeX/Tectonic, and Markdown)."""
 
 from __future__ import annotations
 
@@ -10,10 +10,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from folio.discovery import find_target_file, resolve_typst_template
-from folio.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
-from folio.templates_latex import build_latex_entry_document
-from folio.ui import ui
+from snowpack.discovery import find_target_file, resolve_typst_template
+from snowpack.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
+from snowpack.templates_latex import build_latex_entry_document
+from snowpack.ui import ui
 
 
 def _linux_set_pdeathsig():

@@ -1,4 +1,4 @@
-"""Configuration loader and toolchain discovery for Folio."""
+"""Configuration loader and toolchain discovery for Snowpack."""
 
 from __future__ import annotations
 
@@ -11,10 +11,10 @@ from typing import Any
 
 
 def load_user_config() -> dict[str, Any]:
-    """Loads optional user defaults from ~/.config/folio/folio.toml."""
+    """Loads optional user defaults from ~/.config/snowpack/snowpack.toml."""
     xdg_config = os.environ.get("XDG_CONFIG_HOME")
     base = Path(xdg_config) if xdg_config else Path.home() / ".config"
-    cfg_path = base / "folio" / "folio.toml"
+    cfg_path = base / "snowpack" / "snowpack.toml"
     if cfg_path.is_file():
         try:
             with cfg_path.open("rb") as f:

@@ -1,7 +1,7 @@
 """Tests for chapter assembler and natural ordering."""
 
 from pathlib import Path
-from folio.assembler import natural_sort_key, assemble_documents
+from snowpack.assembler import natural_sort_key, assemble_documents
 
 
 def test_natural_sort_key():

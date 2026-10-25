@@ -1,4 +1,4 @@
-"""Shared fixtures for Folio tests."""
+"""Shared fixtures for Snowpack tests."""
 
 import pytest
 from pathlib import Path

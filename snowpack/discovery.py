@@ -1,14 +1,14 @@
-"""Workspace discovery, document resolution, and status dashboard panel for Folio."""
+"""Workspace discovery, document resolution, and status dashboard panel for Snowpack."""
 
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
-from folio import __version__
-from folio.config import check_toolchain
-from folio.frontmatter import normalize_mode
-from folio.ui import ui
+from snowpack import __version__
+from snowpack.config import check_toolchain
+from snowpack.frontmatter import normalize_mode
+from snowpack.ui import ui
 
 
 def discover_workspace_documents(directory: Path | str = ".") -> list[Path]:
@@ -25,7 +25,7 @@ def discover_workspace_documents(directory: Path | str = ".") -> list[Path]:
     return [
         f
         for f in doc_files
-        if not f.name.startswith(("_body", "_entry", "_folio"))
+        if not f.name.startswith(("_body", "_entry", "_snowpack"))
         and f.name not in ("README.md", "LICENSE.md", "CONTRIBUTING.md")
     ]
 
@@ -79,11 +79,11 @@ def find_target_file(arg_path: str | None, base_dir: Path | str = ".") -> Path:
             chosen = ui.select("Multiple documents found. Select one to compile:", options)
             return Path(chosen)
         names = ", ".join(f.name for f in doc_files)
-        ui.error(f"Multiple documents found ({names}). Specify one: folio <file>")
+        ui.error(f"Multiple documents found ({names}). Specify one: snowpack <file>")
         sys.exit(1)
 
     ui.error(
-        "No document found. Scaffold one with 'flaker init folio' or 'flaker new folio'."
+        "No document found. Scaffold one with 'flaker init snowpack' or 'flaker new snowpack'."
     )
     sys.exit(1)
 
@@ -132,13 +132,13 @@ def resolve_typst_template(
 
     ui.error(
         f"Template '{expected_name}' not found in workspace.\n"
-        f"  Run '{ui.bold('flaker project folio')}' to scaffold templates, or specify --template <path>."
+        f"  Run '{ui.bold('flaker project snowpack')}' to scaffold templates, or specify --template <path>."
     )
     sys.exit(1)
 
 
 def print_status_dashboard(base_dir: Path | str = ".") -> list[Path]:
-    """Renders the standard SpanishSyntax bounding box panel for Folio.
+    """Renders the standard SpanishSyntax bounding box panel for Snowpack.
 
     Returns list of discovered workspace documents.
     """
@@ -167,7 +167,7 @@ def print_status_dashboard(base_dir: Path | str = ".") -> list[Path]:
         )
         if f.exists()
     ]
-    tpl_str = ", ".join(tpl_found) if tpl_found else ui.dim("none (use flaker project folio)")
+    tpl_str = ", ".join(tpl_found) if tpl_found else ui.dim("none (use flaker project snowpack)")
 
     # Docs summary
     if docs:
@@ -179,12 +179,12 @@ def print_status_dashboard(base_dir: Path | str = ".") -> list[Path]:
         docs_display = ui.dim("no documents found in workspace")
 
     lines = [
-        f"{ui.bold('Folio Version:')}     {ui.bold_cyan(f'v{__version__}')} (Engines: Typst, Tectonic/LaTeX, Pandoc)",
+        f"{ui.bold('Snowpack Version:')}     {ui.bold_cyan(f'v{__version__}')} (Engines: Typst, Tectonic/LaTeX, Pandoc)",
         f"{ui.bold('Active Workspace:')}  {base}",
         f"{ui.bold('Backend Tools:')}     {'  '.join(tc_badges)}",
         f"{ui.bold('Found Templates:')}   {tpl_str}",
         f"{ui.bold('Target Documents:')}  {docs_display}",
     ]
 
-    ui.panel("FOLIO DOCUMENT & PRESENTATION COMPILER", lines)
+    ui.panel("SNOWPACK DOCUMENT & PRESENTATION COMPILER", lines)
     return docs

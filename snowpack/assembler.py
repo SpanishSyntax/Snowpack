@@ -1,4 +1,4 @@
-"""Multi-chapter modular Markdown assembler for Folio."""
+"""Multi-chapter modular Markdown assembler for Snowpack."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ import re
 from pathlib import Path
 from typing import Any
 
-from folio.frontmatter import normalize_mode, parse_frontmatter
-from folio.ui import ui
+from snowpack.frontmatter import normalize_mode, parse_frontmatter
+from snowpack.ui import ui
 
 
 def natural_sort_key(p: Path) -> list[Any]:

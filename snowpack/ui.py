@@ -1,4 +1,4 @@
-"""Terminal UI interface for Folio, powered by Rime."""
+"""Terminal UI interface for Snowpack, powered by Rime."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from rime import (
     visual_len,
 )
 
-ui = UI(app_name="folio", icon="❄️", badge_color="1;34")
+ui = UI(app_name="snowpack", icon="❄️", badge_color="1;34")
 
 __all__ = [
     "ui",

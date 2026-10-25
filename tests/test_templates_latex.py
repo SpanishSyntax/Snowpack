@@ -1,7 +1,7 @@
 """Tests for LaTeX and Beamer preambles and templates."""
 
 from pathlib import Path
-from folio.templates_latex import (
+from snowpack.templates_latex import (
     tex_safe,
     get_doc_class,
     get_beamer_theme,

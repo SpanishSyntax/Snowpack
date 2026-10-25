@@ -1,4 +1,4 @@
-"""Frontmatter extraction, mode normalization, and Typst kwargs builder for Folio."""
+"""Frontmatter extraction, mode normalization, and Typst kwargs builder for Snowpack."""
 
 from __future__ import annotations
 

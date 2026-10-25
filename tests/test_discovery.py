@@ -2,7 +2,7 @@
 
 from pathlib import Path
 import pytest
-from folio.discovery import (
+from snowpack.discovery import (
     discover_workspace_documents,
     find_target_file,
     resolve_typst_template,
@@ -56,5 +56,5 @@ def test_print_status_dashboard(tmp_path: Path, capsys):
     docs = print_status_dashboard(tmp_path)
     assert len(docs) == 1
     captured = capsys.readouterr()
-    assert "FOLIO DOCUMENT & PRESENTATION COMPILER" in captured.out
+    assert "SNOWPACK DOCUMENT & PRESENTATION COMPILER" in captured.out
     assert "input.md" in captured.out

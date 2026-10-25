@@ -1,5 +1,5 @@
 {
-  description = "Folio - Markdown to Beautiful Typst PDF Document Compiler";
+  description = "Snowpack - Markdown to Beautiful Typst PDF Document Compiler";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -25,8 +25,8 @@
       };
       lib = pkgs.lib;
 
-      folioPackage = pkgs.python3Packages.buildPythonApplication {
-        pname = "folio";
+      snowpackPackage = pkgs.python3Packages.buildPythonApplication {
+        pname = "snowpack";
         version = "0.1.0";
         src = ./.;
         pyproject = true;
@@ -44,7 +44,7 @@
         ];
 
         postFixup = ''
-          wrapProgram $out/bin/folio \
+          wrapProgram $out/bin/snowpack \
             --prefix PATH : ${lib.makeBinPath [pkgs.pandoc pkgs.typst pkgs.tectonic]}
         '';
 
@@ -56,25 +56,25 @@
 
         meta = with lib; {
           description = "Markdown to Typst & LaTeX Multi-Mode Document Compiler";
-          homepage = "https://github.com/SpanishSyntax/Folio";
+          homepage = "https://github.com/SpanishSyntax/Snowpack";
           license = licenses.mit;
-          mainProgram = "folio";
+          mainProgram = "snowpack";
         };
       };
     in {
       packages = {
-        default = folioPackage;
-        folio = folioPackage;
+        default = snowpackPackage;
+        snowpack = snowpackPackage;
       };
 
       apps = {
         default = {
           type = "app";
-          program = "${folioPackage}/bin/folio";
+          program = "${snowpackPackage}/bin/snowpack";
         };
-        folio = {
+        snowpack = {
           type = "app";
-          program = "${folioPackage}/bin/folio";
+          program = "${snowpackPackage}/bin/snowpack";
         };
       };
 
@@ -93,30 +93,30 @@
     // {
       overlays = {
         default = final: prev: {
-          folio = self.packages.${prev.stdenv.hostPlatform.system}.default;
+          snowpack = self.packages.${prev.stdenv.hostPlatform.system}.default;
         };
-        folio = self.overlays.default;
+        snowpack = self.overlays.default;
       };
 
       nixosModules = {
-        default = self.nixosModules.folio;
-        folio = {
+        default = self.nixosModules.snowpack;
+        snowpack = {
           config,
           lib,
           pkgs,
           ...
         }: let
-          cfg = config.programs.folio;
+          cfg = config.programs.snowpack;
           system = pkgs.stdenv.hostPlatform.system;
-          defaultFolio = self.packages.${system}.default;
+          defaultSnowpack = self.packages.${system}.default;
         in {
-          options.programs.folio = {
-            enable = lib.mkEnableOption "Folio - Markdown to Typst PDF Document Compiler";
+          options.programs.snowpack = {
+            enable = lib.mkEnableOption "Snowpack - Markdown to Typst PDF Document Compiler";
 
             package = lib.mkOption {
               type = lib.types.package;
-              default = defaultFolio;
-              description = "The Folio package to use.";
+              default = defaultSnowpack;
+              description = "The Snowpack package to use.";
             };
           };
 
@@ -127,39 +127,39 @@
       };
 
       homeManagerModules = {
-        default = self.homeManagerModules.folio;
-        folio = {
+        default = self.homeManagerModules.snowpack;
+        snowpack = {
           config,
           lib,
           pkgs,
           ...
         }: let
-          cfg = config.programs.folio;
+          cfg = config.programs.snowpack;
           tomlFormat = pkgs.formats.toml {};
           system = pkgs.stdenv.hostPlatform.system;
-          defaultFolio = self.packages.${system}.default;
+          defaultSnowpack = self.packages.${system}.default;
         in {
-          options.programs.folio = {
-            enable = lib.mkEnableOption "Folio - Markdown to Typst PDF Document Compiler";
+          options.programs.snowpack = {
+            enable = lib.mkEnableOption "Snowpack - Markdown to Typst PDF Document Compiler";
 
             package = lib.mkOption {
               type = lib.types.package;
-              default = defaultFolio;
-              description = "The Folio package to use.";
+              default = defaultSnowpack;
+              description = "The Snowpack package to use.";
             };
 
             settings = lib.mkOption {
               type = tomlFormat.type;
               default = {};
-              description = "Configuration written to ~/.config/folio/folio.toml.";
+              description = "Configuration written to ~/.config/snowpack/snowpack.toml.";
             };
           };
 
           config = lib.mkIf cfg.enable {
             home.packages = [cfg.package];
 
-            xdg.configFile."folio/folio.toml" = lib.mkIf (cfg.settings != {}) {
-              source = tomlFormat.generate "folio.toml" cfg.settings;
+            xdg.configFile."snowpack/snowpack.toml" = lib.mkIf (cfg.settings != {}) {
+              source = tomlFormat.generate "snowpack.toml" cfg.settings;
             };
           };
         };

@@ -1,4 +1,4 @@
-"""CLI router, argument parser, and interactive status dashboard for Folio."""
+"""CLI router, argument parser, and interactive status dashboard for Snowpack."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ import sys
 from pathlib import Path
 from typing import Any, Sequence
 
-from folio import __version__
-from folio.assembler import assemble_documents, natural_sort_key
-from folio.compiler import (
+from snowpack import __version__
+from snowpack.assembler import assemble_documents, natural_sort_key
+from snowpack.compiler import (
     _linux_set_pdeathsig,
     build_pdf,
     compile_markdown_latex,
@@ -17,17 +17,17 @@ from folio.compiler import (
     compile_tectonic,
     compile_typst_direct,
 )
-from folio.config import check_toolchain, load_user_config
-from folio.discovery import (
+from snowpack.config import check_toolchain, load_user_config
+from snowpack.discovery import (
     discover_workspace_documents,
     find_target_file,
     print_status_dashboard,
     resolve_typst_template,
 )
-from folio.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
-from folio.templates_latex import tex_safe
-from folio.ui import handle_color_args, ui
-from folio.watcher import watch_pdf
+from snowpack.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
+from snowpack.templates_latex import tex_safe
+from snowpack.ui import handle_color_args, ui
+from snowpack.watcher import watch_pdf
 
 __all__ = [
     "main",
@@ -55,10 +55,10 @@ __all__ = [
 USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Typst + LaTeX)")}
 
 {ui.blue("Usage:")}
-  folio                              Open interactive dashboard & quick compiler
-  folio [file] [options]             Build PDF from Markdown, Typst, or LaTeX
-  folio build [file] [options]       Explicit build command
-  folio assemble [dir] [options]     Assemble modular chapters into master Markdown
+  snowpack                              Open interactive dashboard & quick compiler
+  snowpack [file] [options]             Build PDF from Markdown, Typst, or LaTeX
+  snowpack build [file] [options]       Explicit build command
+  snowpack assemble [dir] [options]     Assemble modular chapters into master Markdown
 
 {ui.blue("Operating Modes:")}
   -m, --mode MODE        Document operating mode:
@@ -82,34 +82,34 @@ USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Ty
 
 {ui.blue("Scaffolding Note:")}
   Workspace scaffolding and templates are managed by {ui.bold("flaker")}:
-  • flaker init folio     # Bootstrap DevShell + template.typ, slides.typ, ieee.typ
-  • flaker project folio  # Drop template foundations into current workspace
-  • flaker new folio      # Drop starter documents (report.md, slides.md, paper.md)
+  • flaker init snowpack     # Bootstrap DevShell + template.typ, slides.typ, ieee.typ
+  • flaker project snowpack  # Drop template foundations into current workspace
+  • flaker new snowpack      # Drop starter documents (report.md, slides.md, paper.md)
 
 {ui.blue("Examples:")}
-  folio                              # Interactive telemetry & documents dashboard
-  folio report.md                    # Compile report.md -> report.pdf (using template.typ)
-  folio assemble chapters            # Assemble chapters/*.md -> report.md (with pagebreaks)
-  folio assemble modules -m slides   # Assemble modules/*.md -> slides.md
-  folio deck.md -m slides -w         # Live watch 16:9 presentation (using slides.typ)
-  folio paper.md -m paper            # Compile IEEE 2-column paper (using ieee.typ)
-  folio main.typ -w                  # Direct Typst compilation with live reload
-  folio main.tex                     # Direct LaTeX compilation via Tectonic
+  snowpack                              # Interactive telemetry & documents dashboard
+  snowpack report.md                    # Compile report.md -> report.pdf (using template.typ)
+  snowpack assemble chapters            # Assemble chapters/*.md -> report.md (with pagebreaks)
+  snowpack assemble modules -m slides   # Assemble modules/*.md -> slides.md
+  snowpack deck.md -m slides -w         # Live watch 16:9 presentation (using slides.typ)
+  snowpack paper.md -m paper            # Compile IEEE 2-column paper (using ieee.typ)
+  snowpack main.typ -w                  # Direct Typst compilation with live reload
+  snowpack main.tex                     # Direct LaTeX compilation via Tectonic
 """
 
 
 def _print_init_info() -> None:
     ui.info(
         "Scaffolding is handled by Flaker. Run:\n"
-        f"  • {ui.bold('flaker init folio')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
-        f"  • {ui.bold('flaker project folio')}  # Scaffold template files into current directory\n"
-        f"  • {ui.bold('flaker new folio')}      # Drop starter documents (report.md, slides.md, paper.md)",
+        f"  • {ui.bold('flaker init snowpack')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
+        f"  • {ui.bold('flaker project snowpack')}  # Scaffold template files into current directory\n"
+        f"  • {ui.bold('flaker new snowpack')}      # Drop starter documents (report.md, slides.md, paper.md)",
         symbol="❄️ ",
     )
 
 
 def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
-    """Provides interactive quick actions when Folio is run without arguments."""
+    """Provides interactive quick actions when Snowpack is run without arguments."""
     actions: list[tuple[str, str, str]] = []
 
     if docs:
@@ -132,9 +132,9 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
     actions.append(("assemble", "Assemble modular chapters (join multiple .md files)", desc))
 
     actions.append(("init_info", "Workspace scaffolding & templates", "Flaker bootstrap guides and starter templates"))
-    actions.append(("exit", "Exit", "Close Folio"))
+    actions.append(("exit", "Exit", "Close Snowpack"))
 
-    choice = ui.select("Folio Quick Actions:", actions)
+    choice = ui.select("Snowpack Quick Actions:", actions)
 
     if choice == "exit":
         return 0
@@ -203,7 +203,7 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
 
 
 def _parse_assemble_args(rest: list[str]) -> dict[str, Any]:
-    parser = argparse.ArgumentParser(prog="folio assemble", add_help=False)
+    parser = argparse.ArgumentParser(prog="snowpack assemble", add_help=False)
     parser.add_argument("chapters_dir", nargs="?", default="chapters")
     parser.add_argument("-o", "--output", dest="output_filename", default=None)
     parser.add_argument("-m", "--mode", dest="mode", default=None)
@@ -227,7 +227,7 @@ def _parse_assemble_args(rest: list[str]) -> dict[str, Any]:
 
 
 def _parse_build_args(rest: list[str], user_cfg: dict[str, Any]) -> dict[str, Any]:
-    parser = argparse.ArgumentParser(prog="folio", add_help=False)
+    parser = argparse.ArgumentParser(prog="snowpack", add_help=False)
     parser.add_argument("target_file", nargs="?", default=None)
     parser.add_argument("-o", "--output", dest="output_filename", default=None)
     parser.add_argument("-m", "--mode", dest="mode", default=None)

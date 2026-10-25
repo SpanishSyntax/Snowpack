@@ -1,13 +1,13 @@
-"""File watcher and live recompilation loop for Folio."""
+"""File watcher and live recompilation loop for Snowpack."""
 
 from __future__ import annotations
 
 import time
 from pathlib import Path
 
-from folio.compiler import build_pdf
-from folio.discovery import find_target_file
-from folio.ui import ui
+from snowpack.compiler import build_pdf
+from snowpack.discovery import find_target_file
+from snowpack.ui import ui
 
 
 def watch_pdf(
