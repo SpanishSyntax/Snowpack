@@ -28,7 +28,7 @@
       snowpackPackage = pkgs.python3Packages.buildPythonApplication {
         pname = "snowpack";
         version = "0.1.0";
-        src = ./.;
+        src = lib.cleanSource ./.;
         pyproject = true;
 
         build-system = [

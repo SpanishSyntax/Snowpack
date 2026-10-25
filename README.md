@@ -193,11 +193,12 @@ Snowpack/
 ├── pyproject.toml          # PEP 517 / 621 Python packaging
 ├── LICENSE                 # MIT License
 ├── README.md               # Documentation & usage guide
-└── snowpack/
-    ├── __init__.py         # Package metadata
-    ├── __main__.py         # python -m snowpack entrypoint
-    ├── cli.py              # Multi-mode compiler pipeline & watch daemon
-    └── ui.py               # Interactive CLI styling, spinners & menus
+└── src/
+    └── snowpack/
+        ├── __init__.py     # Package metadata
+        ├── __main__.py     # python -m snowpack entrypoint
+        ├── cli.py          # Multi-mode compiler pipeline & watch daemon
+        └── ui.py           # Interactive CLI styling, spinners & menus
 ```
 
 ---

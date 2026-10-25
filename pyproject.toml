@@ -33,10 +33,10 @@ test = [
 snowpack = "snowpack.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["snowpack*"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = ["src"]
 testpaths = ["tests"]
 
