@@ -21,7 +21,7 @@ classifiers = [
   "Topic :: Text Processing :: Markup",
 ]
 dependencies = [
-  "rime",
+  "prism",
 ]
 
 [project.optional-dependencies]

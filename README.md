@@ -1,4 +1,4 @@
-# Snowpack 📝❄️
+# Snowpack 📝📓
 
 > **Hermetic Multi-Mode Document & Presentation Compiler (Typst + LaTeX)**
 

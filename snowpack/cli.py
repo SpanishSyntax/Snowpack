@@ -104,7 +104,7 @@ def _print_init_info() -> None:
         f"  • {ui.bold('flaker init snowpack')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
         f"  • {ui.bold('flaker project snowpack')}  # Scaffold template files into current directory\n"
         f"  • {ui.bold('flaker new snowpack')}      # Drop starter documents (report.md, slides.md, paper.md)",
-        symbol="❄️ ",
+        symbol="📓 ",
     )
 
 
@@ -167,7 +167,7 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
         options = [
             (
                 str(d),
-                f"{'📄' if d.suffix == '.md' else ('❄️' if d.suffix == '.typ' else '📜')} {d.name}",
+                f"{'📄' if d.suffix == '.md' else ('📓' if d.suffix == '.typ' else '📜')} {d.name}",
                 f"{d.stat().st_size:,} bytes",
             )
             for d in docs

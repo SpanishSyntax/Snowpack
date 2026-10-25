@@ -70,7 +70,7 @@ def find_target_file(arg_path: str | None, base_dir: Path | str = ".") -> Path:
                 if f.suffix == ".md":
                     icon = "📄"
                 elif f.suffix == ".typ":
-                    icon = "❄️"
+                    icon = "📓"
                 else:
                     icon = "📜"
                 options.append(

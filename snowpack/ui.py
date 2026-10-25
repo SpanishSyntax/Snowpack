@@ -1,8 +1,8 @@
-"""Terminal UI interface for Snowpack, powered by Rime."""
+"""Terminal UI interface for Snowpack, powered by Prism."""
 
 from __future__ import annotations
 
-from rime import (
+from prism import (
     UI,
     Spinner,
     add_color_args,
@@ -21,7 +21,7 @@ from rime import (
     visual_len,
 )
 
-ui = UI(app_name="snowpack", icon="❄️", badge_color="1;34")
+ui = UI(app_name="snowpack", icon="📓", badge_color="1;34")
 
 __all__ = [
     "ui",
