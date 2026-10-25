@@ -5,7 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     prism = {
-      url = "git+ssh://git@github.com/SpanishSyntax/Prism.git";
+      url = "github:SpanishSyntax/Prism";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
