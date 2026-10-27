@@ -83,7 +83,7 @@ def find_target_file(arg_path: str | None, base_dir: Path | str = ".") -> Path:
         sys.exit(1)
 
     ui.error(
-        "No document found. Scaffold one with 'flaker init snowpack' or 'flaker new snowpack'."
+        "No document found. Scaffold one with 'basecamp init snowpack' or 'basecamp new snowpack'."
     )
     sys.exit(1)
 
@@ -132,7 +132,7 @@ def resolve_typst_template(
 
     ui.error(
         f"Template '{expected_name}' not found in workspace.\n"
-        f"  Run '{ui.bold('flaker project snowpack')}' to scaffold templates, or specify --template <path>."
+        f"  Run '{ui.bold('basecamp project snowpack')}' to scaffold templates, or specify --template <path>."
     )
     sys.exit(1)
 
@@ -167,7 +167,7 @@ def print_status_dashboard(base_dir: Path | str = ".") -> list[Path]:
         )
         if f.exists()
     ]
-    tpl_str = ", ".join(tpl_found) if tpl_found else ui.dim("none (use flaker project snowpack)")
+    tpl_str = ", ".join(tpl_found) if tpl_found else ui.dim("none (use basecamp project snowpack)")
 
     # Docs summary
     if docs:

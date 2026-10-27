@@ -19,22 +19,22 @@ Snowpack is an opinionated, ultra-fast document compiler that turns standard Git
   - Compiles native **`.tex`** files directly with Tectonic (`latex:report`, `latex:slides`, `latex:paper`).
 - 📑 **YAML Frontmatter Integration**: Control title, authors, affiliations, operating mode (`mode: slides`), preset (`preset: ieee`), engine (`engine: typst` or `latex`), theme (`theme: dark`), and geometry directly in Markdown frontmatter.
 - 👁️ **Live Watch Mode (`snowpack <doc> -w`)**: Continuous background watcher that detects file saves and automatically re-compiles the PDF in milliseconds.
-- 🤝 **Flaker Integration**: Scaffolding is completely delegated to [Flaker](https://github.com/SpanishSyntax/Flaker) (`flaker init md:report`, `flaker init typst:slides`, `flaker init latex:paper`), providing the full 9-way document scaffolding matrix.
+- 🤝 **Basecamp Integration**: Scaffolding is completely delegated to [Basecamp](https://github.com/SpanishSyntax/Basecamp) (`basecamp init md:report`, `basecamp init typst:slides`, `basecamp init latex:paper`), providing the full 9-way document scaffolding matrix.
 
 ---
 
 ## 🚀 Quick Start
 
-1. **Scaffold workspace using Flaker**:
+1. **Scaffold workspace using Basecamp**:
 ```bash
 # Initialize DevShell + templates (report.typ, slides.typ, paper.typ) + starters
-flaker init snowpack
+basecamp init snowpack
 
 # Or drop templates into an existing workspace
-flaker project snowpack
+basecamp project snowpack
 
 # Or drop starter leaf documents
-flaker new snowpack
+basecamp new snowpack
 ```
 
 2. **Compile with Snowpack**:

@@ -81,10 +81,10 @@ USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Ty
   -V, -v, --version      Show version information and exit
 
 {ui.blue("Scaffolding Note:")}
-  Workspace scaffolding and templates are managed by {ui.bold("flaker")}:
-  • flaker init snowpack     # Bootstrap DevShell + template.typ, slides.typ, ieee.typ
-  • flaker project snowpack  # Drop template foundations into current workspace
-  • flaker new snowpack      # Drop starter documents (report.md, slides.md, paper.md)
+  Workspace scaffolding and templates are managed by {ui.bold("basecamp")}:
+  • basecamp init snowpack     # Bootstrap DevShell + template.typ, slides.typ, ieee.typ
+  • basecamp project snowpack  # Drop template foundations into current workspace
+  • basecamp new snowpack      # Drop starter documents (report.md, slides.md, paper.md)
 
 {ui.blue("Examples:")}
   snowpack                              # Interactive telemetry & documents dashboard
@@ -100,10 +100,10 @@ USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Ty
 
 def _print_init_info() -> None:
     ui.info(
-        "Scaffolding is handled by Flaker. Run:\n"
-        f"  • {ui.bold('flaker init snowpack')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
-        f"  • {ui.bold('flaker project snowpack')}  # Scaffold template files into current directory\n"
-        f"  • {ui.bold('flaker new snowpack')}      # Drop starter documents (report.md, slides.md, paper.md)",
+        "Scaffolding is handled by Basecamp. Run:\n"
+        f"  • {ui.bold('basecamp init snowpack')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
+        f"  • {ui.bold('basecamp project snowpack')}  # Scaffold template files into current directory\n"
+        f"  • {ui.bold('basecamp new snowpack')}      # Drop starter documents (report.md, slides.md, paper.md)",
         symbol="📝 ",
     )
 
@@ -131,7 +131,7 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
         desc = "Join modular chapter markdown files into a master document"
     actions.append(("assemble", "Assemble modular chapters (join multiple .md files)", desc))
 
-    actions.append(("init_info", "Workspace scaffolding & templates", "Flaker bootstrap guides and starter templates"))
+    actions.append(("init_info", "Workspace scaffolding & templates", "Basecamp bootstrap guides and starter templates"))
     actions.append(("exit", "Exit", "Close Snowpack"))
 
     choice = ui.select("Snowpack Quick Actions:", actions)

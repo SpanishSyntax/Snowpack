@@ -24,7 +24,7 @@ def test_cli_init(capsys):
     ret = main(["init"])
     assert ret == 0
     captured = capsys.readouterr()
-    assert "flaker init snowpack" in captured.out
+    assert "basecamp init snowpack" in captured.out
 
 
 def test_cli_assemble_dispatch(tmp_path: Path, monkeypatch, capsys):
