@@ -52,7 +52,33 @@ __all__ = [
     "_linux_set_pdeathsig",
 ]
 
-USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Typst + LaTeX)")}
+def get_usage() -> str:
+    """Returns the Prism-styled help and usage guide matching Basecamp & Borealis, or compact agent guide."""
+    if ui.is_agent:
+        return f"""Snowpack v{__version__} - Polyglot Document & Presentation Compiler (Typst + LaTeX)
+Usage: snowpack [file] [options]
+       snowpack build [file] [options]
+       snowpack assemble [dir] [options]
+
+Operating Modes:
+  -m, --mode MODE        Document operating mode: report, slides, paper
+  -p, --preset PRESET    Layout preset (e.g. 'ieee', 'default')
+
+Options:
+  -A, --agent            Compact machine/agent friendly output mode
+  --json                 Structured JSON output mode
+  -o, --output PATH      Specify output PDF filename
+  -t, --template PATH    Use custom Typst template file
+  -w, --watch            Watch mode: recompile automatically on file changes
+  --engine ENGINE        Compiler engine: 'typst' (default) or 'tectonic'
+  --root PATH            Typst compilation root directory
+  --font-path PATH       Additional directory containing fonts for Typst
+  --color MODE           Color output mode: auto, always, never
+  --no-color             Disable colored output
+  -h, --help             Show this help message and exit
+  -V, -v, --version      Show version information and exit
+"""
+    return f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Typst + LaTeX)")}
 
 {ui.blue("Usage:")}
   snowpack                              Open interactive dashboard & quick compiler
@@ -68,6 +94,8 @@ USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Ty
   -p, --preset PRESET    Layout preset (e.g., 'ieee', 'default')
 
 {ui.blue("Options:")}
+  -A, --agent            Compact agent-friendly output mode
+  --json                 Structured JSON output mode
   -o, --output PATH      Specify output PDF filename
   -t, --template PATH    Use custom Typst template file
   -w, --watch            Watch mode: recompile automatically on file changes
@@ -97,8 +125,15 @@ USAGE = f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Ty
   snowpack main.tex                     # Direct LaTeX compilation via Tectonic
 """
 
+USAGE = get_usage()
+
 
 def _print_init_info() -> None:
+    if ui.is_agent:
+        ui.info(
+            "Scaffolding is handled by Basecamp: basecamp init snowpack | basecamp project snowpack | basecamp new snowpack"
+        )
+        return
     ui.info(
         "Scaffolding is handled by Basecamp. Run:\n"
         f"  • {ui.bold('basecamp init snowpack')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
@@ -250,17 +285,25 @@ def main(argv: Sequence[str] | None = None) -> int:
     handle_color_args(raw_args)
 
     if any(a in ("-h", "--help", "help") for a in raw_args):
-        print(USAGE)
+        print(get_usage())
         return 0
 
     if any(a in ("-V", "-v", "--version", "version") for a in raw_args):
+        if ui.is_json:
+            import json
+
+            print(json.dumps({"app": "snowpack", "version": __version__}))
+            return 0
+        if ui.is_agent:
+            print(f"snowpack {__version__}")
+            return 0
         print(f"{ui.badge()} {ui.bold(f'v{__version__}')}")
         return 0
 
     # No arguments provided: display dashboard panel!
     if not raw_args:
         docs = print_status_dashboard()
-        if sys.stdin.isatty():
+        if sys.stdin.isatty() and not ui.is_agent:
             return run_interactive_hub(docs, user_cfg)
         else:
             if docs:
@@ -293,6 +336,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     else:
         ok = build_pdf(**opts)
+        if ui.is_json:
+            import json
+
+            target_val = opts.get("target_file")
+            out_pdf = opts.get("output_filename")
+            print(
+                json.dumps(
+                    {
+                        "status": "ok" if ok else "error",
+                        "target": str(target_val) if target_val else None,
+                        "output": str(out_pdf) if out_pdf else None,
+                        "mode": opts.get("mode", "report"),
+                    }
+                )
+            )
         return 0 if ok else 1
 
 

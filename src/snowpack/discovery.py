@@ -79,12 +79,18 @@ def find_target_file(arg_path: str | None, base_dir: Path | str = ".") -> Path:
             chosen = ui.select("Multiple documents found. Select one to compile:", options)
             return Path(chosen)
         names = ", ".join(f.name for f in doc_files)
-        ui.error(f"Multiple documents found ({names}). Specify one: snowpack <file>")
+        if ui.is_agent:
+            ui.error(f"Multiple documents found: {names}")
+        else:
+            ui.error(f"Multiple documents found ({names}). Specify one: snowpack <file>")
         sys.exit(1)
 
-    ui.error(
-        "No document found. Scaffold one with 'basecamp init snowpack' or 'basecamp new snowpack'."
-    )
+    if ui.is_agent:
+        ui.error("No document found.")
+    else:
+        ui.error(
+            "No document found. Scaffold one with 'basecamp init snowpack' or 'basecamp new snowpack'."
+        )
     sys.exit(1)
 
 
