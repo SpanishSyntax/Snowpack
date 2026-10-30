@@ -26,7 +26,7 @@ from snowpack.discovery import (
 )
 from snowpack.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
 from snowpack.templates_latex import tex_safe
-from snowpack.ui import handle_color_args, ui
+from snowpack.ui import handle_color_args, handle_version_arg, ui
 from snowpack.watcher import watch_pdf
 
 __all__ = [
@@ -288,22 +288,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(get_usage())
         return 0
 
-    if any(a in ("-V", "-v", "--version", "version") for a in raw_args):
-        if ui.is_json:
-            import json
-
-            print(json.dumps({"app": "snowpack", "version": __version__}))
-            return 0
-        if ui.is_agent:
-            print(f"snowpack {__version__}")
-            return 0
-        print(f"{ui.badge()} {ui.bold(f'v{__version__}')}")
+    if handle_version_arg(raw_args, __version__):
         return 0
 
     # No arguments provided: display dashboard panel!
     if not raw_args:
         docs = print_status_dashboard()
-        if sys.stdin.isatty() and not ui.is_agent:
+        if ui.is_interactive:
             return run_interactive_hub(docs, user_cfg)
         else:
             if docs:
@@ -337,19 +328,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         ok = build_pdf(**opts)
         if ui.is_json:
-            import json
-
             target_val = opts.get("target_file")
             out_pdf = opts.get("output_filename")
-            print(
-                json.dumps(
-                    {
-                        "status": "ok" if ok else "error",
-                        "target": str(target_val) if target_val else None,
-                        "output": str(out_pdf) if out_pdf else None,
-                        "mode": opts.get("mode", "report"),
-                    }
-                )
+            ui.json(
+                {
+                    "status": "ok" if ok else "error",
+                    "target": str(target_val) if target_val else None,
+                    "output": str(out_pdf) if out_pdf else None,
+                    "mode": opts.get("mode", "report"),
+                }
             )
         return 0 if ok else 1
 
