@@ -288,7 +288,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(get_usage())
         return 0
 
-    if handle_version_arg(raw_args, __version__):
+    if ui.handle_version_arg(raw_args, __version__):
         return 0
 
     # No arguments provided: display dashboard panel!
