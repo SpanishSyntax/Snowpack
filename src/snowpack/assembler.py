@@ -18,6 +18,112 @@ def natural_sort_key(p: Path) -> list[Any]:
     ]
 
 
+def _parse_simple_yaml(text: str) -> dict[str, Any]:
+    """Lightweight zero-dependency YAML parser for book and chapter manifests."""
+    result: dict[str, Any] = {}
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            i += 1
+            continue
+        if ":" in stripped:
+            k, v = stripped.split(":", 1)
+            k = k.strip().lower()
+            v = v.strip().strip("\"'")
+            if not v:
+                sub_items: list[Any] = []
+                i += 1
+                while i < len(lines):
+                    s_line = lines[i]
+                    s_stripped = s_line.strip()
+                    if not s_stripped or s_stripped.startswith("#"):
+                        i += 1
+                        continue
+                    indent = len(s_line) - len(s_line.lstrip(" "))
+                    if indent == 0 and not s_stripped.startswith("-"):
+                        break
+                    if s_stripped.startswith("- "):
+                        sub_items.append(s_stripped[2:].strip().strip("\"'"))
+                    i += 1
+                result[k] = sub_items
+                continue
+            else:
+                result[k] = v
+        i += 1
+    return result
+
+
+def resolve_ordered_chapter_files(
+    work_path: Path,
+    ch_path: Path,
+    pattern: str = "*.md",
+) -> list[Path]:
+    """Resolves chapter files using a multi-tier strategy:
+    1. Manifest file (book.yaml, book.toml, snowpack.yaml, manifest.yaml).
+    2. Order list file (order.txt).
+    3. Natural alphanumeric sort across matching files in chapters_dir.
+    """
+    manifest_names = (
+        "book.yaml",
+        "book.yml",
+        "book.toml",
+        "snowpack.yaml",
+        "snowpack.yml",
+        "snowpack.toml",
+        "manifest.yaml",
+    )
+    for search_dir in (work_path, ch_path):
+        for m_name in manifest_names:
+            m_file = search_dir / m_name
+            if m_file.is_file():
+                try:
+                    content = m_file.read_text(encoding="utf-8")
+                    if m_file.suffix.lower() == ".toml":
+                        import tomllib
+                        data = tomllib.loads(content)
+                    else:
+                        data = _parse_simple_yaml(content)
+                    raw_chaps = data.get("chapters", data.get("pages", []))
+                    resolved: list[Path] = []
+                    for item in raw_chaps:
+                        rel_p = item if isinstance(item, str) else item.get("path", "")
+                        if rel_p:
+                            for base in (search_dir, ch_path, work_path):
+                                cand = (base / rel_p).resolve()
+                                if cand.is_file() and cand not in resolved:
+                                    resolved.append(cand)
+                                    break
+                    if resolved:
+                        return resolved
+                except Exception:
+                    pass
+
+    # Tier 2: Check order.txt in ch_path
+    order_file = ch_path / "order.txt"
+    if order_file.is_file():
+        try:
+            lines = [ln.strip() for ln in order_file.read_text(encoding="utf-8").splitlines()]
+            resolved = []
+            for ln in lines:
+                if ln and not ln.startswith("#"):
+                    cand = (ch_path / ln).resolve()
+                    if cand.is_file():
+                        resolved.append(cand)
+            if resolved:
+                return resolved
+        except Exception:
+            pass
+
+    # Tier 3: Natural sort fallback
+    return sorted(
+        [f for f in ch_path.glob(pattern) if f.is_file()],
+        key=natural_sort_key,
+    )
+
+
 def assemble_documents(
     chapters_dir: str = "chapters",
     output_filename: str | None = None,
@@ -41,10 +147,7 @@ def assemble_documents(
         ui.error(f"Chapters directory not found: '{chapters_dir}'.")
         return False
 
-    matched_files = sorted(
-        [f for f in ch_path.glob(pattern) if f.is_file()],
-        key=natural_sort_key,
-    )
+    matched_files = resolve_ordered_chapter_files(work_path, ch_path, pattern=pattern)
     if not matched_files:
         ui.error(f"No chapter files matching '{pattern}' found in '{chapters_dir}'.")
         return False

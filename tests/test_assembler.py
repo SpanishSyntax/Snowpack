@@ -79,3 +79,34 @@ def test_assemble_documents_missing_dir(tmp_path: Path):
         base_dir=tmp_path,
     )
     assert success is False
+
+
+def test_assemble_documents_with_manifest(tmp_path: Path):
+    ch_dir = tmp_path / "chapters"
+    ch_dir.mkdir()
+
+    (ch_dir / "01_intro.md").write_text("# Intro", encoding="utf-8")
+    (ch_dir / "02_theory.md").write_text("# Theory", encoding="utf-8")
+
+    # Manifest specifies theory BEFORE intro
+    (tmp_path / "book.yaml").write_text("""
+chapters:
+  - chapters/02_theory.md
+  - chapters/01_intro.md
+""", encoding="utf-8")
+
+    out_file = tmp_path / "report.md"
+    success = assemble_documents(
+        chapters_dir="chapters",
+        output_filename="report.md",
+        title="Custom Ordered Book",
+        base_dir=tmp_path,
+    )
+
+    assert success is True
+    content = out_file.read_text(encoding="utf-8")
+    # Verify exact custom ordering from manifest, NOT alphabetical
+    pos_theory = content.find("# Theory")
+    pos_intro = content.find("# Intro")
+    assert pos_theory != -1 and pos_intro != -1
+    assert pos_theory < pos_intro
