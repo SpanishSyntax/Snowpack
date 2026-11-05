@@ -93,7 +93,7 @@ def find_target_file(arg_path: str | None, base_dir: Path | str = ".") -> Path:
         ui.error("No document found.")
     else:
         ui.error(
-            "No document found. Scaffold one with 'basecamp init snowpack' or 'basecamp new snowpack'."
+            "No document found. Scaffold one with 'snowpack new [report|slides|paper]' or 'snowpack init'."
         )
     sys.exit(1)
 
@@ -140,9 +140,16 @@ def resolve_typst_template(
         if cand_path.exists():
             return cand_path, entry_func
 
+    # Fallback to Snowpack's built-in bundled template
+    bundled_cand = (
+        Path(__file__).resolve().parent / "templates" / "starter" / expected_name
+    )
+    if bundled_cand.exists():
+        return bundled_cand, entry_func
+
     ui.error(
         f"Template '{expected_name}' not found in workspace.\n"
-        f"  Run '{ui.bold('basecamp project snowpack')}' to scaffold templates, or specify --template <path>."
+        f"  Run '{ui.bold('snowpack new ' + mode)}' or specify --template <path>."
     )
     sys.exit(1)
 

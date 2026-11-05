@@ -142,6 +142,55 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "name": "snowpack_new",
+        "description": "Scaffolds a new publication-grade starter document (report, slides, paper) in Typst, Markdown, or LaTeX with optional companion files.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target": {
+                    "type": "string",
+                    "description": "Document mode or filename to scaffold ('report', 'slides', 'paper', 'slides.typ', etc.).",
+                    "default": "report",
+                },
+                "format": {
+                    "type": "string",
+                    "description": "Document format: 'typ' (Typst, default), 'md' (Markdown), 'tex' (LaTeX).",
+                    "default": "typ",
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Document title override.",
+                    "default": "",
+                },
+                "subtitle": {
+                    "type": "string",
+                    "description": "Optional document subtitle.",
+                    "default": "",
+                },
+                "author": {
+                    "type": "string",
+                    "description": "Author name.",
+                    "default": "",
+                },
+                "theme": {
+                    "type": "string",
+                    "description": "Presentation theme: 'dark' (default) or 'light'.",
+                    "default": "dark",
+                },
+                "directory": {
+                    "type": "string",
+                    "description": "Workspace directory where the document should be created (default '.').",
+                    "default": ".",
+                },
+                "force": {
+                    "type": "boolean",
+                    "description": "Overwrite existing files without prompting.",
+                    "default": False,
+                },
+            },
+        },
+    },
 ]
 
 
@@ -302,6 +351,37 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
                 "chapters_count": len(chapter_files),
                 "chapter_files": chapter_files,
                 "size_bytes": out_path.stat().st_size if out_path.is_file() else 0,
+            }
+
+        elif name == "snowpack_new":
+            from snowpack.scaffold import new_document
+
+            target = args.get("target") or "report"
+            fmt = args.get("format") or "typ"
+            title = str(args.get("title", "")).strip() or None
+            subtitle = str(args.get("subtitle", "")).strip() or None
+            author = str(args.get("author", "")).strip() or None
+            theme = str(args.get("theme", "")).strip() or "dark"
+            directory = args.get("directory") or "."
+            force = bool(args.get("force", False))
+
+            with contextlib.redirect_stdout(sys.stderr):
+                created_file = new_document(
+                    target_or_mode=target,
+                    directory=directory,
+                    format_hint=fmt,
+                    title=title,
+                    subtitle=subtitle,
+                    author=author,
+                    theme=theme,
+                    force=force,
+                )
+
+            return {
+                "status": "ok",
+                "file": str(created_file),
+                "name": created_file.name,
+                "exists": created_file.is_file(),
             }
 
         else:

@@ -21,11 +21,20 @@ def test_cli_help(capsys):
     assert "Operating Modes:" in captured.out
 
 
-def test_cli_init(capsys):
+def test_cli_init(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
     ret = main(["init"])
     assert ret == 0
-    captured = capsys.readouterr()
-    assert "basecamp init snowpack" in captured.out
+    assert (tmp_path / "report.typ").exists()
+    assert (tmp_path / "packages.typ").exists()
+    assert (tmp_path / "library.bib").exists()
+
+
+def test_cli_new(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    ret = main(["new", "slides"])
+    assert ret == 0
+    assert (tmp_path / "slides.typ").exists()
 
 
 def test_cli_assemble_dispatch(tmp_path: Path, monkeypatch, capsys):

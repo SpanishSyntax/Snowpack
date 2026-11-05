@@ -36,6 +36,9 @@ snowpack = "snowpack.cli:main"
 where = ["src"]
 include = ["snowpack*"]
 
+[tool.setuptools.package-data]
+snowpack = ["templates/**/*", "templates/*"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

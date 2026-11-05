@@ -59,8 +59,17 @@ def get_usage() -> str:
         return f"""Snowpack v{__version__} - Polyglot Document & Presentation Compiler (Typst + LaTeX)
 Usage: snowpack [file] [options]
        snowpack build [file] [options]
+       snowpack new [target] [options]
+       snowpack init [preset] [options]
        snowpack assemble [dir] [options]
        snowpack mcp                      Run Model Context Protocol (MCP) stdio server
+
+Commands:
+  build [file]           Build PDF from Markdown, Typst, or LaTeX
+  new [target]           Scaffold a new document: report, slides, paper (.typ, .md, .tex)
+  init [preset]          Initialize complete Snowpack workspace with packages and starter doc
+  assemble [dir]         Assemble modular chapters into master Markdown
+  mcp                    Run Model Context Protocol (MCP) stdio server
 
 Operating Modes:
   -m, --mode MODE        Document operating mode: report, slides, paper
@@ -69,9 +78,13 @@ Operating Modes:
 Options:
   -A, --agent            Compact machine/agent friendly output mode
   --json                 Structured JSON output mode
+  -f, --format FMT       Document format: typ (default), md, tex
   -o, --output PATH      Specify output PDF filename
   -t, --template PATH    Use custom Typst template file
   -w, --watch            Watch mode: recompile automatically on file changes
+  --title TITLE          Document title for 'new' / 'init'
+  --author AUTHOR        Document author for 'new' / 'init'
+  --theme THEME          Presentation theme ('dark' or 'light')
   --engine ENGINE        Compiler engine: 'typst' (default) or 'tectonic'
   --root PATH            Typst compilation root directory
   --font-path PATH       Additional directory containing fonts for Typst
@@ -86,8 +99,17 @@ Options:
   snowpack                              Open interactive dashboard & quick compiler
   snowpack [file] [options]             Build PDF from Markdown, Typst, or LaTeX
   snowpack build [file] [options]       Explicit build command
+  snowpack new [target] [options]       Scaffold a new document: report, slides, paper
+  snowpack init [preset] [options]      Initialize complete Snowpack workspace
   snowpack assemble [dir] [options]     Assemble modular chapters into master Markdown
   snowpack mcp                          Run Model Context Protocol (MCP) stdio server
+
+{ui.blue("Commands:")}
+  build [file]           Build PDF from Markdown, Typst, or LaTeX
+  new [target]           Scaffold a new document: report, slides, paper (.typ, .md, .tex)
+  init [preset]          Initialize Snowpack workspace (packages.typ/tex, bib, and starter doc)
+  assemble [dir]         Assemble modular chapters into master Markdown
+  mcp                    Run Model Context Protocol (MCP) stdio server
 
 {ui.blue("Operating Modes:")}
   -m, --mode MODE        Document operating mode:
@@ -96,7 +118,14 @@ Options:
                          • {ui.bold("paper")}:  Academic paper (IEEE 2-column layout)
   -p, --preset PRESET    Layout preset (e.g., 'ieee', 'default')
 
-{ui.blue("Options:")}
+{ui.blue("Scaffolding Options:")}
+  -f, --format FMT       Document format: 'typ' (Typst, default), 'md' (Markdown), 'tex' (LaTeX)
+  --title TITLE          Document title (default: workspace directory name)
+  --author AUTHOR        Author name (detected from Git or 'Author')
+  --theme THEME          Presentation theme: 'dark' (default) or 'light'
+  -F, --force            Overwrite existing files without prompting
+
+{ui.blue("Build Options:")}
   -A, --agent            Compact agent-friendly output mode
   --json                 Structured JSON output mode
   -o, --output PATH      Specify output PDF filename
@@ -111,40 +140,89 @@ Options:
   -h, --help             Show this help message and exit
   -V, -v, --version      Show version information and exit
 
-{ui.blue("Scaffolding Note:")}
-  Workspace scaffolding and templates are managed by {ui.bold("basecamp")}:
-  • basecamp init snowpack     # Bootstrap DevShell + template.typ, slides.typ, ieee.typ
-  • basecamp project snowpack  # Drop template foundations into current workspace
-  • basecamp new snowpack      # Drop starter documents (report.md, slides.md, paper.md)
-
 {ui.blue("Examples:")}
   snowpack                              # Interactive telemetry & documents dashboard
-  snowpack report.md                    # Compile report.md -> report.pdf (using template.typ)
+  snowpack new slides                   # Scaffold modern 16:9 Typst presentation (slides.typ)
+  snowpack new paper --format md        # Scaffold IEEE 2-column Markdown paper (paper.md)
+  snowpack init                         # Initialize workspace (packages.typ + report.typ + bib)
+  snowpack report.md                    # Compile report.md -> report.pdf
   snowpack assemble chapters            # Assemble chapters/*.md -> report.md (with pagebreaks)
-  snowpack assemble modules -m slides   # Assemble modules/*.md -> slides.md
-  snowpack deck.md -m slides -w         # Live watch 16:9 presentation (using slides.typ)
-  snowpack paper.md -m paper            # Compile IEEE 2-column paper (using ieee.typ)
+  snowpack deck.md -m slides -w         # Live watch 16:9 presentation
   snowpack main.typ -w                  # Direct Typst compilation with live reload
-  snowpack main.tex                     # Direct LaTeX compilation via Tectonic
 """
 
 
 USAGE = get_usage()
 
 
-def _print_init_info() -> None:
-    if ui.is_agent:
-        ui.info(
-            "Scaffolding is handled by Basecamp: basecamp init snowpack | basecamp project snowpack | basecamp new snowpack"
-        )
-        return
-    ui.info(
-        "Scaffolding is handled by Basecamp. Run:\n"
-        f"  • {ui.bold('basecamp init snowpack')}     # Bootstrap DevShell + report.typ, slides.typ, paper.typ\n"
-        f"  • {ui.bold('basecamp project snowpack')}  # Scaffold template files into current directory\n"
-        f"  • {ui.bold('basecamp new snowpack')}      # Drop starter documents (report.md, slides.md, paper.md)",
-        symbol="📝 ",
+def _handle_init_cmd(rest: list[str]) -> int:
+    parser = argparse.ArgumentParser(prog="snowpack init", add_help=False)
+    parser.add_argument("mode", nargs="?", default="report")
+    parser.add_argument("-f", "--format", dest="format_hint", default="typ")
+    parser.add_argument("--title", dest="title", default=None)
+    parser.add_argument("--author", dest="author", default=None)
+    parser.add_argument("--theme", dest="theme", default="dark")
+    parser.add_argument(
+        "-F", "--force", dest="force", action="store_true", default=False
     )
+    parser.add_argument("-d", "--dir", dest="directory", default=".")
+    args, _ = parser.parse_known_args(rest)
+    try:
+        from snowpack.scaffold import init_workspace
+
+        res = init_workspace(
+            directory=args.directory,
+            mode=args.mode,
+            format_hint=args.format_hint,
+            title=args.title,
+            author=args.author,
+            theme=args.theme,
+            force=args.force,
+        )
+        if ui.is_json:
+            ui.json(res)
+        return 0
+    except Exception as exc:
+        ui.error(str(exc))
+        return 1
+
+
+def _handle_new_cmd(rest: list[str]) -> int:
+    parser = argparse.ArgumentParser(prog="snowpack new", add_help=False)
+    parser.add_argument("target", nargs="?", default="report")
+    parser.add_argument("-m", "--mode", dest="mode", default=None)
+    parser.add_argument("-f", "--format", dest="format_hint", default=None)
+    parser.add_argument("--title", dest="title", default=None)
+    parser.add_argument("--subtitle", dest="subtitle", default=None)
+    parser.add_argument("--author", dest="author", default=None)
+    parser.add_argument("--theme", dest="theme", default="dark")
+    parser.add_argument("--engine", dest="engine", default="typst")
+    parser.add_argument(
+        "-F", "--force", dest="force", action="store_true", default=False
+    )
+    parser.add_argument("-d", "--dir", dest="directory", default=".")
+    args, _ = parser.parse_known_args(rest)
+    try:
+        from snowpack.scaffold import new_document
+
+        target = args.mode or args.target
+        path = new_document(
+            target_or_mode=target,
+            directory=args.directory,
+            format_hint=args.format_hint,
+            title=args.title,
+            subtitle=args.subtitle,
+            author=args.author,
+            theme=args.theme,
+            engine=args.engine,
+            force=args.force,
+        )
+        if ui.is_json:
+            ui.json({"status": "ok", "file": str(path)})
+        return 0
+    except Exception as exc:
+        ui.error(str(exc))
+        return 1
 
 
 def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
@@ -214,9 +292,16 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
 
     actions.append(
         (
-            "init_info",
-            "Workspace scaffolding & templates",
-            "Basecamp bootstrap guides and starter templates",
+            "new_doc",
+            "Scaffold a new document (report, slides, paper)",
+            "Generate Typst, Markdown, or LaTeX starter templates",
+        )
+    )
+    actions.append(
+        (
+            "init_ws",
+            "Initialize Snowpack workspace",
+            "Bootstrap workspace with packages.typ and starter files",
         )
     )
     actions.append(("exit", "Exit", "Close Snowpack"))
@@ -225,8 +310,31 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
 
     if choice == "exit":
         return 0
-    elif choice == "init_info":
-        _print_init_info()
+    elif choice == "new_doc":
+        mode_choice = ui.select(
+            "Select document type to scaffold:",
+            [
+                ("report", "Technical Report / Standard Document (A4/Letter)"),
+                ("slides", "16:9 Widescreen Presentation (1080p Keynote style)"),
+                ("paper", "Academic Paper (IEEE 2-column layout)"),
+            ],
+        )
+        fmt_choice = ui.select(
+            "Select format:",
+            [
+                ("typ", "Typst (.typ) - fast, native typesetting"),
+                ("md", "Markdown (.md) - portable frontmatter document"),
+                ("tex", "LaTeX (.tex) - academic TeX document"),
+            ],
+        )
+        from snowpack.scaffold import new_document
+
+        new_document(target_or_mode=mode_choice, format_hint=fmt_choice)
+        return 0
+    elif choice == "init_ws":
+        from snowpack.scaffold import init_workspace
+
+        init_workspace()
         return 0
     elif choice == "assemble":
         default_dir = detected_ch[0] if detected_ch else "chapters"
@@ -384,8 +492,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     rest = raw_args[1:]
 
     if cmd == "init":
-        _print_init_info()
-        return 0
+        return _handle_init_cmd(rest)
+
+    if cmd == "new":
+        return _handle_new_cmd(rest)
 
     if cmd == "mcp":
         from snowpack.mcp import main as mcp_main
