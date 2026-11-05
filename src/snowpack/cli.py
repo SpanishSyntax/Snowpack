@@ -26,7 +26,7 @@ from snowpack.discovery import (
 )
 from snowpack.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
 from snowpack.templates_latex import tex_safe
-from snowpack.ui import handle_color_args, ui
+from snowpack.ui import handle_agent_args, handle_color_args, ui
 from snowpack.watcher import watch_pdf
 
 __all__ = [
@@ -430,6 +430,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     user_cfg = load_user_config()
     if "color" in user_cfg:
         ui.set_color_mode(str(user_cfg["color"]))
+    handle_agent_args(raw_args)
     handle_color_args(raw_args)
 
     if any(a in ("-h", "--help", "help") for a in raw_args):
