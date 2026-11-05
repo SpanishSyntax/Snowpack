@@ -59,6 +59,7 @@ def get_usage() -> str:
 Usage: snowpack [file] [options]
        snowpack build [file] [options]
        snowpack assemble [dir] [options]
+       snowpack mcp                      Run Model Context Protocol (MCP) stdio server
 
 Operating Modes:
   -m, --mode MODE        Document operating mode: report, slides, paper
@@ -85,6 +86,7 @@ Options:
   snowpack [file] [options]             Build PDF from Markdown, Typst, or LaTeX
   snowpack build [file] [options]       Explicit build command
   snowpack assemble [dir] [options]     Assemble modular chapters into master Markdown
+  snowpack mcp                          Run Model Context Protocol (MCP) stdio server
 
 {ui.blue("Operating Modes:")}
   -m, --mode MODE        Document operating mode:
@@ -279,6 +281,9 @@ def _parse_build_args(rest: list[str], user_cfg: dict[str, Any]) -> dict[str, An
 
 def main(argv: Sequence[str] | None = None) -> int:
     raw_args = list(argv) if argv is not None else sys.argv[1:]
+    if (raw_args and raw_args[0] == "mcp") or ("mcp" in raw_args) or (argv is None and "mcp" in sys.argv):
+        from snowpack.mcp import main as mcp_main
+        return mcp_main()
     user_cfg = load_user_config()
     if "color" in user_cfg:
         ui.set_color_mode(str(user_cfg["color"]))
@@ -311,6 +316,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     if cmd == "init":
         _print_init_info()
         return 0
+
+    if cmd == "mcp":
+        from snowpack.mcp import main as mcp_main
+        return mcp_main()
 
     if cmd == "assemble":
         asm_kwargs = _parse_assemble_args(rest)
