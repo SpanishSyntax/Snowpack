@@ -168,7 +168,10 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
                             target_path = cand_path
                             break
                 if not target_path.is_file():
-                    return {"status": "error", "error": f"Source document not found: {input_file}"}
+                    return {
+                        "status": "error",
+                        "error": f"Source document not found: {input_file}",
+                    }
 
             output_pdf = str(args.get("output_pdf", "")).strip() or None
             mode = str(args.get("mode", "")).strip() or None
@@ -207,7 +210,8 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
                     "input_file": str(target_path),
                     "output_pdf": str(expected_pdf),
                     "mode": mode or "report",
-                    "engine": engine or ("tectonic" if target_path.suffix == ".tex" else "typst"),
+                    "engine": engine
+                    or ("tectonic" if target_path.suffix == ".tex" else "typst"),
                     "pdf_created": True,
                     "size_bytes": pdf_size,
                 }
@@ -237,9 +241,16 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
             workspace_dir = args.get("workspace_dir") or "."
 
             work_path = Path(workspace_dir).resolve()
-            ch_path = work_path / chapters_dir if not Path(chapters_dir).is_absolute() else Path(chapters_dir)
+            ch_path = (
+                work_path / chapters_dir
+                if not Path(chapters_dir).is_absolute()
+                else Path(chapters_dir)
+            )
             if not ch_path.is_dir():
-                return {"status": "error", "error": f"Chapters directory not found: {ch_path}"}
+                return {
+                    "status": "error",
+                    "error": f"Chapters directory not found: {ch_path}",
+                }
 
             with contextlib.redirect_stdout(sys.stderr):
                 ok = assemble_documents(
@@ -260,15 +271,29 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
                 )
 
             if not ok:
-                return {"status": "error", "error": f"Failed to assemble chapters from {ch_path}"}
+                return {
+                    "status": "error",
+                    "error": f"Failed to assemble chapters from {ch_path}",
+                }
 
             final_mode = normalize_mode(mode)
             if output_file:
-                out_path = work_path / output_file if not Path(output_file).is_absolute() else Path(output_file)
+                out_path = (
+                    work_path / output_file
+                    if not Path(output_file).is_absolute()
+                    else Path(output_file)
+                )
             else:
-                out_path = work_path / ("slides.md" if final_mode == "slides" else "report.md")
+                out_path = work_path / (
+                    "slides.md" if final_mode == "slides" else "report.md"
+                )
 
-            chapter_files = [f.name for f in resolve_ordered_chapter_files(work_path, ch_path, pattern=pattern)]
+            chapter_files = [
+                f.name
+                for f in resolve_ordered_chapter_files(
+                    work_path, ch_path, pattern=pattern
+                )
+            ]
 
             return {
                 "status": "ok",

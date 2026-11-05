@@ -209,9 +209,7 @@ def build_latex_entry_document(
     """Builds a complete LaTeX / Tectonic entry file importing the pandoc body."""
     doc_class = get_doc_class(mode)
     pkg_input = (
-        "\\input{packages.tex}\n"
-        if (compile_root / "packages.tex").exists()
-        else ""
+        "\\input{packages.tex}\n" if (compile_root / "packages.tex").exists() else ""
     )
 
     title_val = tex_safe(fm.get("title", ""))
@@ -227,7 +225,9 @@ def build_latex_entry_document(
 
     if mode == "paper":
         if dep_val and email_val:
-            thanks_str = f"\\thanks{{The author is with the {dep_val} (e-mail: {email_val}).}}"
+            thanks_str = (
+                f"\\thanks{{The author is with the {dep_val} (e-mail: {email_val}).}}"
+            )
         elif dep_val:
             thanks_str = f"\\thanks{{The author is with the {dep_val}.}}"
         elif email_val:

@@ -1,7 +1,8 @@
 """Tests for chapter assembler and natural ordering."""
 
 from pathlib import Path
-from snowpack.assembler import natural_sort_key, assemble_documents
+
+from snowpack.assembler import assemble_documents, natural_sort_key
 
 
 def test_natural_sort_key():
@@ -89,11 +90,14 @@ def test_assemble_documents_with_manifest(tmp_path: Path):
     (ch_dir / "02_theory.md").write_text("# Theory", encoding="utf-8")
 
     # Manifest specifies theory BEFORE intro
-    (tmp_path / "book.yaml").write_text("""
+    (tmp_path / "book.yaml").write_text(
+        """
 chapters:
   - chapters/02_theory.md
   - chapters/01_intro.md
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     out_file = tmp_path / "report.md"
     success = assemble_documents(

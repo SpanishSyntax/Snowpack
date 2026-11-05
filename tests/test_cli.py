@@ -1,6 +1,7 @@
 """Tests for Snowpack CLI parsing and execution routing."""
 
 from pathlib import Path
+
 from snowpack import __version__
 from snowpack.cli import main
 
@@ -53,6 +54,7 @@ def test_cli_interactive_hub_exit(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr("sys.stdin.isatty", lambda: True)
     from snowpack.ui import ui
+
     monkeypatch.setattr(ui, "select", lambda title, options: "exit")
     ret = main([])
     assert ret == 0
@@ -66,6 +68,7 @@ def test_cli_interactive_hub_assemble(tmp_path: Path, monkeypatch):
 
     monkeypatch.setattr("sys.stdin.isatty", lambda: True)
     from snowpack.ui import ui
+
     monkeypatch.setattr(ui, "select", lambda title, options: "assemble")
     monkeypatch.setattr(ui, "prompt", lambda title, default: default)
     monkeypatch.setattr(ui, "confirm", lambda title, default: False)
@@ -73,4 +76,3 @@ def test_cli_interactive_hub_assemble(tmp_path: Path, monkeypatch):
     ret = main([])
     assert ret == 0
     assert (tmp_path / "report.md").exists()
-

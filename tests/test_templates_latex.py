@@ -1,11 +1,12 @@
 """Tests for LaTeX and Beamer preambles and templates."""
 
 from pathlib import Path
+
 from snowpack.templates_latex import (
-    tex_safe,
-    get_doc_class,
-    get_beamer_theme,
     build_latex_entry_document,
+    get_beamer_theme,
+    get_doc_class,
+    tex_safe,
 )
 
 

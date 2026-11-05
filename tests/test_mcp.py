@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from snowpack.mcp import StdioMCPServer, TOOL_DEFINITIONS, execute_tool
+from snowpack.mcp import StdioMCPServer, execute_tool
 
 
 def test_mcp_initialize() -> None:
@@ -74,8 +74,12 @@ def test_mcp_assemble(tmp_path: Path) -> None:
     ch_dir = tmp_path / "chapters"
     ch_dir.mkdir()
 
-    (ch_dir / "01_intro.md").write_text("# Chapter 1: Foundations\nIntro content.\n", encoding="utf-8")
-    (ch_dir / "02_methods.md").write_text("# Chapter 2: Methods\nMethods content.\n", encoding="utf-8")
+    (ch_dir / "01_intro.md").write_text(
+        "# Chapter 1: Foundations\nIntro content.\n", encoding="utf-8"
+    )
+    (ch_dir / "02_methods.md").write_text(
+        "# Chapter 2: Methods\nMethods content.\n", encoding="utf-8"
+    )
 
     out_file = tmp_path / "unified.md"
     req = {
@@ -138,6 +142,7 @@ def test_mcp_build_missing_file() -> None:
 
 def test_mcp_run_loop(monkeypatch: Any) -> None:
     import io
+
     input_stream = io.StringIO('{"jsonrpc": "2.0", "id": 1, "method": "ping"}\n')
     output_stream = io.StringIO()
     monkeypatch.setattr("sys.stdin", input_stream)
@@ -152,10 +157,15 @@ def test_mcp_run_loop(monkeypatch: Any) -> None:
 def test_mcp_notifications_and_errors() -> None:
     server = StdioMCPServer()
     # Notification returns None
-    assert server.handle_request({"jsonrpc": "2.0", "method": "notifications/initialized"}) is None
+    assert (
+        server.handle_request({"jsonrpc": "2.0", "method": "notifications/initialized"})
+        is None
+    )
 
     # Unknown method returns code -32601
-    resp = server.handle_request({"jsonrpc": "2.0", "id": 5, "method": "unknown/method"})
+    resp = server.handle_request(
+        {"jsonrpc": "2.0", "id": 5, "method": "unknown/method"}
+    )
     assert resp is not None
     assert resp["error"]["code"] == -32601
 

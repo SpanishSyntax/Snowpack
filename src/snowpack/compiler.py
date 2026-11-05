@@ -329,7 +329,11 @@ def build_pdf(
         success = compile_tectonic(target_path, out_pdf, quiet=quiet, preexec=preexec)
         if success and open_after:
             open_cmd = "xdg-open" if sys.platform.startswith("linux") else "open"
-            subprocess.Popen([open_cmd, out_pdf], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.Popen(
+                [open_cmd, out_pdf],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
         return success
 
     # Direct Typst handling
@@ -344,7 +348,11 @@ def build_pdf(
         )
         if success and open_after:
             open_cmd = "xdg-open" if sys.platform.startswith("linux") else "open"
-            subprocess.Popen([open_cmd, out_pdf], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.Popen(
+                [open_cmd, out_pdf],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
         return success
 
     # Markdown pipeline
@@ -378,6 +386,8 @@ def build_pdf(
 
     if success and open_after:
         open_cmd = "xdg-open" if sys.platform.startswith("linux") else "open"
-        subprocess.Popen([open_cmd, out_pdf], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.Popen(
+            [open_cmd, out_pdf], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
 
     return success

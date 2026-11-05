@@ -26,7 +26,7 @@ from snowpack.discovery import (
 )
 from snowpack.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
 from snowpack.templates_latex import tex_safe
-from snowpack.ui import handle_color_args, handle_version_arg, ui
+from snowpack.ui import handle_color_args, ui
 from snowpack.watcher import watch_pdf
 
 __all__ = [
@@ -51,6 +51,7 @@ __all__ = [
     "discover_workspace_documents",
     "_linux_set_pdeathsig",
 ]
+
 
 def get_usage() -> str:
     """Returns the Prism-styled help and usage guide matching Basecamp & Borealis, or compact agent guide."""
@@ -127,6 +128,7 @@ Options:
   snowpack main.tex                     # Direct LaTeX compilation via Tectonic
 """
 
+
 USAGE = get_usage()
 
 
@@ -151,24 +153,72 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
 
     if docs:
         first_doc = docs[0]
-        actions.append(("build", f"Compile '{first_doc.name}' to PDF", "Immediate Typst/LaTeX compilation"))
-        actions.append(("watch", f"Watch & live compile '{first_doc.name}'", "Recompiles instantly on file save"))
+        actions.append(
+            (
+                "build",
+                f"Compile '{first_doc.name}' to PDF",
+                "Immediate Typst/LaTeX compilation",
+            )
+        )
+        actions.append(
+            (
+                "watch",
+                f"Watch & live compile '{first_doc.name}'",
+                "Recompiles instantly on file save",
+            )
+        )
         if len(docs) > 1:
-            actions.append(("select_build", "Pick from discovered documents...", f"{len(docs)} document targets found"))
+            actions.append(
+                (
+                    "select_build",
+                    "Pick from discovered documents...",
+                    f"{len(docs)} document targets found",
+                )
+            )
     else:
-        actions.append(("build_custom", "Compile a document to PDF...", "Specify a document file path to compile"))
-        actions.append(("watch_custom", "Watch & live compile a document...", "Live reload a specific document file path"))
+        actions.append(
+            (
+                "build_custom",
+                "Compile a document to PDF...",
+                "Specify a document file path to compile",
+            )
+        )
+        actions.append(
+            (
+                "watch_custom",
+                "Watch & live compile a document...",
+                "Live reload a specific document file path",
+            )
+        )
 
     # Check for chapters / modules directory or offer assemble
-    ch_dirs = [d.name for d in Path(".").iterdir() if d.is_dir() and not d.name.startswith(".")] if Path(".").exists() else []
-    detected_ch = [d for d in ("chapters", "modules", "sections", "parts") if d in ch_dirs]
+    ch_dirs = (
+        [
+            d.name
+            for d in Path(".").iterdir()
+            if d.is_dir() and not d.name.startswith(".")
+        ]
+        if Path(".").exists()
+        else []
+    )
+    detected_ch = [
+        d for d in ("chapters", "modules", "sections", "parts") if d in ch_dirs
+    ]
     if detected_ch:
         desc = f"Join markdown files from ./{detected_ch[0]}/ into a master document"
     else:
         desc = "Join modular chapter markdown files into a master document"
-    actions.append(("assemble", "Assemble modular chapters (join multiple .md files)", desc))
+    actions.append(
+        ("assemble", "Assemble modular chapters (join multiple .md files)", desc)
+    )
 
-    actions.append(("init_info", "Workspace scaffolding & templates", "Basecamp bootstrap guides and starter templates"))
+    actions.append(
+        (
+            "init_info",
+            "Workspace scaffolding & templates",
+            "Basecamp bootstrap guides and starter templates",
+        )
+    )
     actions.append(("exit", "Exit", "Close Snowpack"))
 
     choice = ui.select("Snowpack Quick Actions:", actions)
@@ -180,7 +230,9 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
         return 0
     elif choice == "assemble":
         default_dir = detected_ch[0] if detected_ch else "chapters"
-        ch_dir = ui.prompt("Directory containing chapter markdown files", default=default_dir)
+        ch_dir = ui.prompt(
+            "Directory containing chapter markdown files", default=default_dir
+        )
         ok = assemble_documents(chapters_dir=ch_dir)
         if ok and ui.confirm("Compile assembled document to PDF now?", default=True):
             build_pdf(
@@ -216,7 +268,9 @@ def run_interactive_hub(docs: list[Path], user_cfg: dict[str, Any]) -> int:
         )
         return 0 if ok else 1
     elif choice == "build_custom":
-        target = ui.prompt("Document path to compile (.md, .typ, .tex)", default="report.md")
+        target = ui.prompt(
+            "Document path to compile (.md, .typ, .tex)", default="report.md"
+        )
         if not Path(target).exists():
             ui.error(f"File not found: '{target}'")
             return 1
@@ -269,20 +323,36 @@ def _parse_build_args(rest: list[str], user_cfg: dict[str, Any]) -> dict[str, An
     parser.add_argument("-o", "--output", dest="output_filename", default=None)
     parser.add_argument("-m", "--mode", dest="mode", default=None)
     parser.add_argument("-p", "--preset", dest="preset", default=None)
-    parser.add_argument("-t", "--template", dest="custom_template", default=user_cfg.get("template"))
-    parser.add_argument("-w", "--watch", dest="is_watch", action="store_true", default=False)
+    parser.add_argument(
+        "-t", "--template", dest="custom_template", default=user_cfg.get("template")
+    )
+    parser.add_argument(
+        "-w", "--watch", dest="is_watch", action="store_true", default=False
+    )
     parser.add_argument("--engine", dest="engine", default=user_cfg.get("engine"))
     parser.add_argument("--root", dest="root_path", default=user_cfg.get("root"))
-    parser.add_argument("--font-path", dest="font_path", default=user_cfg.get("font_path"))
-    parser.add_argument("--open", dest="open_after", action="store_true", default=bool(user_cfg.get("open", False)))
+    parser.add_argument(
+        "--font-path", dest="font_path", default=user_cfg.get("font_path")
+    )
+    parser.add_argument(
+        "--open",
+        dest="open_after",
+        action="store_true",
+        default=bool(user_cfg.get("open", False)),
+    )
     args, _ = parser.parse_known_args(rest)
     return vars(args)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     raw_args = list(argv) if argv is not None else sys.argv[1:]
-    if (raw_args and raw_args[0] == "mcp") or ("mcp" in raw_args) or (argv is None and "mcp" in sys.argv):
+    if (
+        (raw_args and raw_args[0] == "mcp")
+        or ("mcp" in raw_args)
+        or (argv is None and "mcp" in sys.argv)
+    ):
         from snowpack.mcp import main as mcp_main
+
         return mcp_main()
     user_cfg = load_user_config()
     if "color" in user_cfg:
@@ -319,6 +389,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if cmd == "mcp":
         from snowpack.mcp import main as mcp_main
+
         return mcp_main()
 
     if cmd == "assemble":

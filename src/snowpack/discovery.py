@@ -76,13 +76,17 @@ def find_target_file(arg_path: str | None, base_dir: Path | str = ".") -> Path:
                 options.append(
                     (str(f), f"{icon} {f.name}", f"{f.stat().st_size:,} bytes")
                 )
-            chosen = ui.select("Multiple documents found. Select one to compile:", options)
+            chosen = ui.select(
+                "Multiple documents found. Select one to compile:", options
+            )
             return Path(chosen)
         names = ", ".join(f.name for f in doc_files)
         if ui.is_agent:
             ui.error(f"Multiple documents found: {names}")
         else:
-            ui.error(f"Multiple documents found ({names}). Specify one: snowpack <file>")
+            ui.error(
+                f"Multiple documents found ({names}). Specify one: snowpack <file>"
+            )
         sys.exit(1)
 
     if ui.is_agent:
@@ -156,7 +160,11 @@ def print_status_dashboard(base_dir: Path | str = ".") -> list[Path]:
     tc_badges: list[str] = []
     for tool, info in toolchain.items():
         if info["installed"]:
-            v_short = (info["version"] or "").split()[1] if info["version"] and len(info["version"].split()) > 1 else "ok"
+            v_short = (
+                (info["version"] or "").split()[1]
+                if info["version"] and len(info["version"].split()) > 1
+                else "ok"
+            )
             tc_badges.append(f"{ui.bold_green('✔')} {tool}({v_short})")
         else:
             tc_badges.append(f"{ui.dim('✘ ' + tool)}")
@@ -173,7 +181,11 @@ def print_status_dashboard(base_dir: Path | str = ".") -> list[Path]:
         )
         if f.exists()
     ]
-    tpl_str = ", ".join(tpl_found) if tpl_found else ui.dim("none (use basecamp project snowpack)")
+    tpl_str = (
+        ", ".join(tpl_found)
+        if tpl_found
+        else ui.dim("none (use basecamp project snowpack)")
+    )
 
     # Docs summary
     if docs:

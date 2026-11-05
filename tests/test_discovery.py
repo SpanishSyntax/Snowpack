@@ -1,12 +1,12 @@
 """Tests for document discovery, template resolution, and status dashboard."""
 
 from pathlib import Path
-import pytest
+
 from snowpack.discovery import (
     discover_workspace_documents,
     find_target_file,
-    resolve_typst_template,
     print_status_dashboard,
+    resolve_typst_template,
 )
 
 

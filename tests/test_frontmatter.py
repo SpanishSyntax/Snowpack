@@ -1,7 +1,8 @@
 """Tests for frontmatter parsing, mode normalization, and typst kwargs."""
 
 from pathlib import Path
-from snowpack.frontmatter import normalize_mode, parse_frontmatter, build_typst_kwargs
+
+from snowpack.frontmatter import build_typst_kwargs, normalize_mode, parse_frontmatter
 
 
 def test_normalize_mode():
@@ -42,7 +43,7 @@ def test_parse_frontmatter_with_comments_and_quotes(tmp_path: Path):
     doc.write_text(
         "---\n"
         'engine: "latex" # Options: typst | latex\n'
-        'theme: dark # Color theme\n'
+        "theme: dark # Color theme\n"
         'subtitle: "State-Space & Observers"\n'
         "# Full line comment\n"
         "---\n"

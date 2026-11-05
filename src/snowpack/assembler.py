@@ -12,10 +12,7 @@ from snowpack.ui import ui
 
 def natural_sort_key(p: Path) -> list[Any]:
     """Sort key that orders numerical filenames naturally (e.g. 1, 2, 10)."""
-    return [
-        int(c) if c.isdigit() else c.lower()
-        for c in re.split(r"(\d+)", p.name)
-    ]
+    return [int(c) if c.isdigit() else c.lower() for c in re.split(r"(\d+)", p.name)]
 
 
 def _parse_simple_yaml(text: str) -> dict[str, Any]:
@@ -83,6 +80,7 @@ def resolve_ordered_chapter_files(
                     content = m_file.read_text(encoding="utf-8")
                     if m_file.suffix.lower() == ".toml":
                         import tomllib
+
                         data = tomllib.loads(content)
                     else:
                         data = _parse_simple_yaml(content)
@@ -105,7 +103,9 @@ def resolve_ordered_chapter_files(
     order_file = ch_path / "order.txt"
     if order_file.is_file():
         try:
-            lines = [ln.strip() for ln in order_file.read_text(encoding="utf-8").splitlines()]
+            lines = [
+                ln.strip() for ln in order_file.read_text(encoding="utf-8").splitlines()
+            ]
             resolved = []
             for ln in lines:
                 if ln and not ln.startswith("#"):
@@ -142,7 +142,11 @@ def assemble_documents(
 ) -> bool:
     """Assembles modular chapter Markdown files into a unified document with consolidated frontmatter."""
     work_path = Path(base_dir).resolve()
-    ch_path = work_path / chapters_dir if not Path(chapters_dir).is_absolute() else Path(chapters_dir)
+    ch_path = (
+        work_path / chapters_dir
+        if not Path(chapters_dir).is_absolute()
+        else Path(chapters_dir)
+    )
     if not ch_path.is_dir():
         ui.error(f"Chapters directory not found: '{chapters_dir}'.")
         return False
@@ -154,7 +158,11 @@ def assemble_documents(
 
     final_mode = normalize_mode(mode)
     if output_filename:
-        out_path = work_path / output_filename if not Path(output_filename).is_absolute() else Path(output_filename)
+        out_path = (
+            work_path / output_filename
+            if not Path(output_filename).is_absolute()
+            else Path(output_filename)
+        )
     else:
         out_path = work_path / ("slides.md" if final_mode == "slides" else "report.md")
 
@@ -184,7 +192,9 @@ def assemble_documents(
 
     if final_mode == "slides":
         final_theme = (theme or existing_meta.get("theme") or "dark").strip().lower()
-        final_aspect = (aspect_ratio or existing_meta.get("aspect_ratio") or "16-9").strip()
+        final_aspect = (
+            aspect_ratio or existing_meta.get("aspect_ratio") or "16-9"
+        ).strip()
         fm_lines.append(f'theme: "{final_theme}"')
         fm_lines.append(f'aspect-ratio: "{final_aspect}"')
 
@@ -201,7 +211,9 @@ def assemble_documents(
             ui.error(f"Failed to read chapter file '{cf.name}': {exc}")
             return False
 
-        clean_body = re.sub(r"^---\s*\n.*?\n---\s*\n?", "", content, flags=re.DOTALL).strip()
+        clean_body = re.sub(
+            r"^---\s*\n.*?\n---\s*\n?", "", content, flags=re.DOTALL
+        ).strip()
         if clean_body:
             processed_names.append(cf.name)
             chapter_bodies.append(clean_body)
