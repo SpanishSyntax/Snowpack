@@ -16,7 +16,11 @@ def test_resolve_document_specs():
     assert resolve_document_specs("slides") == ("slides", "typ", "slides.typ")
     assert resolve_document_specs("slides.md") == ("slides", "md", "slides.md")
     assert resolve_document_specs("paper.tex") == ("paper", "tex", "paper.tex")
-    assert resolve_document_specs("report", format_hint="md") == ("report", "md", "report.md")
+    assert resolve_document_specs("report", format_hint="md") == (
+        "report",
+        "md",
+        "report.md",
+    )
     assert resolve_document_specs("presentation") == ("slides", "typ", "slides.typ")
     assert resolve_document_specs("article.typ") == ("paper", "typ", "paper.typ")
 

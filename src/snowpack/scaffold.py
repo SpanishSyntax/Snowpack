@@ -10,11 +10,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-from snowpack.manifests import (
-    LATEX_PACKAGE_BUNDLES,
-    TYPST_PACKAGE_BUNDLES,
-    generate_packages_manifest,
-)
 from snowpack.ui import ui
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
@@ -67,7 +62,7 @@ def resolve_document_specs(
       'report' -> ('report', 'typ', 'report.typ')
     """
     clean = target_or_mode.strip().lower()
-    
+
     # Check if user specified a file extension
     ext = None
     if "." in clean:
@@ -120,7 +115,7 @@ def render_template_content(
 ) -> str:
     """Replaces standard Snowpack template placeholders with provided metadata."""
     final_date = date or time.strftime("%B %Y")
-    
+
     replacements = {
         "__TITLE__": title,
         "__SUBTITLE__": subtitle,
