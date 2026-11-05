@@ -55,101 +55,66 @@ __all__ = [
 
 def get_usage() -> str:
     """Returns the Prism-styled help and usage guide matching Basecamp & Borealis, or compact agent guide."""
-    if ui.is_agent:
-        return f"""Snowpack v{__version__} - Polyglot Document & Presentation Compiler (Typst + LaTeX)
-Usage: snowpack [file] [options]
-       snowpack build [file] [options]
-       snowpack new [target] [options]
-       snowpack init [preset] [options]
-       snowpack assemble [dir] [options]
-       snowpack mcp                      Run Model Context Protocol (MCP) stdio server
-
-Commands:
-  build [file]           Build PDF from Markdown, Typst, or LaTeX
-  new [target]           Scaffold a new document: report, slides, paper (.typ, .md, .tex)
-  init [preset]          Initialize complete Snowpack workspace with packages and starter doc
-  assemble [dir]         Assemble modular chapters into master Markdown
-  mcp                    Run Model Context Protocol (MCP) stdio server
-
-Operating Modes:
-  -m, --mode MODE        Document operating mode: report, slides, paper
-  -p, --preset PRESET    Layout preset (e.g. 'ieee', 'default')
-
-Options:
-  -A, --agent            Compact machine/agent friendly output mode
-  --json                 Structured JSON output mode
-  -f, --format FMT       Document format: typ (default), md, tex
-  -o, --output PATH      Specify output PDF filename
-  -t, --template PATH    Use custom Typst template file
-  -w, --watch            Watch mode: recompile automatically on file changes
-  --title TITLE          Document title for 'new' / 'init'
-  --author AUTHOR        Document author for 'new' / 'init'
-  --theme THEME          Presentation theme ('dark' or 'light')
-  --engine ENGINE        Compiler engine: 'typst' (default) or 'tectonic'
-  --root PATH            Typst compilation root directory
-  --font-path PATH       Additional directory containing fonts for Typst
-  --color MODE           Color output mode: auto, always, never
-  --no-color             Disable colored output
-  -h, --help             Show this help message and exit
-  -V, -v, --version      Show version information and exit
-"""
-    return f"""{ui.badge()} {ui.bold("Polyglot Document & Presentation Compiler (Typst + LaTeX)")}
-
-{ui.blue("Usage:")}
-  snowpack                              Open interactive dashboard & quick compiler
-  snowpack [file] [options]             Build PDF from Markdown, Typst, or LaTeX
-  snowpack build [file] [options]       Explicit build command
-  snowpack new [target] [options]       Scaffold a new document: report, slides, paper
-  snowpack init [preset] [options]      Initialize complete Snowpack workspace
-  snowpack assemble [dir] [options]     Assemble modular chapters into master Markdown
-  snowpack mcp                          Run Model Context Protocol (MCP) stdio server
-
-{ui.blue("Commands:")}
-  build [file]           Build PDF from Markdown, Typst, or LaTeX
-  new [target]           Scaffold a new document: report, slides, paper (.typ, .md, .tex)
-  init [preset]          Initialize Snowpack workspace (packages.typ/tex, bib, and starter doc)
-  assemble [dir]         Assemble modular chapters into master Markdown
-  mcp                    Run Model Context Protocol (MCP) stdio server
-
-{ui.blue("Operating Modes:")}
-  -m, --mode MODE        Document operating mode:
-                         • {ui.bold("report")}: Minimal sans-serif document (default, A4/Letter)
-                         • {ui.bold("slides")}: 16:9 widescreen presentation (1920x1080)
-                         • {ui.bold("paper")}:  Academic paper (IEEE 2-column layout)
-  -p, --preset PRESET    Layout preset (e.g., 'ieee', 'default')
-
-{ui.blue("Scaffolding Options:")}
-  -f, --format FMT       Document format: 'typ' (Typst, default), 'md' (Markdown), 'tex' (LaTeX)
-  --title TITLE          Document title (default: workspace directory name)
-  --author AUTHOR        Author name (detected from Git or 'Author')
-  --theme THEME          Presentation theme: 'dark' (default) or 'light'
-  -F, --force            Overwrite existing files without prompting
-
-{ui.blue("Build Options:")}
-  -A, --agent            Compact agent-friendly output mode
-  --json                 Structured JSON output mode
-  -o, --output PATH      Specify output PDF filename
-  -t, --template PATH    Use custom Typst template file
-  -w, --watch            Watch mode: recompile automatically on file changes
-  --engine ENGINE        Compiler engine: 'typst' (default) or 'tectonic'
-  --root PATH            Typst compilation root directory (default: current directory)
-  --font-path PATH       Additional directory containing fonts for Typst
-  --open                 Open generated PDF in system viewer after build
-  --color MODE           Color output mode: auto, always, never (default: auto)
-  --no-color             Disable colored output
-  -h, --help             Show this help message and exit
-  -V, -v, --version      Show version information and exit
-
-{ui.blue("Examples:")}
-  snowpack                              # Interactive telemetry & documents dashboard
-  snowpack new slides                   # Scaffold modern 16:9 Typst presentation (slides.typ)
-  snowpack new paper --format md        # Scaffold IEEE 2-column Markdown paper (paper.md)
-  snowpack init                         # Initialize workspace (packages.typ + report.typ + bib)
-  snowpack report.md                    # Compile report.md -> report.pdf
-  snowpack assemble chapters            # Assemble chapters/*.md -> report.md (with pagebreaks)
-  snowpack deck.md -m slides -w         # Live watch 16:9 presentation
-  snowpack main.typ -w                  # Direct Typst compilation with live reload
-"""
+    return ui.render_help(
+        tagline="Polyglot Document & Presentation Compiler (Typst + LaTeX)",
+        version=__version__,
+        usage=[
+            "snowpack [file] [options]",
+            "snowpack build [file] [options]",
+            "snowpack new [target] [options]",
+            "snowpack init [preset] [options]",
+            "snowpack assemble [dir] [options]",
+            "snowpack mcp",
+        ],
+        commands=[
+            ("build [file]", "Build PDF from Markdown, Typst, or LaTeX"),
+            ("new [target]", "Scaffold a new document: report, slides, paper (.typ, .md, .tex)"),
+            ("init [preset]", "Initialize complete Snowpack workspace with packages and starter doc"),
+            ("assemble [dir]", "Assemble modular chapters into master Markdown"),
+            ("mcp", "Run Model Context Protocol (MCP) stdio server"),
+        ],
+        sections=[
+            (
+                "Operating Modes",
+                [
+                    ("-m report", "Minimal sans-serif document (default, A4/Letter)"),
+                    ("-m slides", "16:9 widescreen presentation (1920x1080)"),
+                    ("-m paper", "Academic paper (IEEE 2-column layout)"),
+                ],
+            )
+        ],
+        options=[
+            ("-A, --agent", "Compact machine/agent friendly output mode"),
+            ("--json", "Structured JSON output mode"),
+            ("-m, --mode MODE", "Document operating mode: report, slides, paper"),
+            ("-p, --preset PRESET", "Layout preset (e.g. 'ieee', 'default')"),
+            ("-f, --format FMT", "Document format: typ (default), md, tex"),
+            ("-o, --output PATH", "Specify output PDF filename"),
+            ("-t, --template PATH", "Use custom Typst template file"),
+            ("-w, --watch", "Watch mode: recompile automatically on file changes"),
+            ("--title TITLE", "Document title for 'new' / 'init'"),
+            ("--author AUTHOR", "Document author for 'new' / 'init'"),
+            ("--theme THEME", "Presentation theme ('dark' or 'light')"),
+            ("--engine ENGINE", "Compiler engine: 'typst' (default) or 'tectonic'"),
+            ("--root PATH", "Typst compilation root directory"),
+            ("--font-path PATH", "Additional directory containing fonts for Typst"),
+            ("--open", "Open generated PDF in system viewer after build"),
+            ("--color MODE", "Color output mode: auto, always, never"),
+            ("--no-color", "Disable colored output"),
+            ("-h, --help", "Show this help message and exit"),
+            ("-V, -v, --version", "Show version information and exit"),
+        ],
+        examples=[
+            ("snowpack", "Interactive telemetry & documents dashboard"),
+            ("snowpack new slides", "Scaffold modern 16:9 Typst presentation (slides.typ)"),
+            ("snowpack new paper --format md", "Scaffold IEEE 2-column Markdown paper (paper.md)"),
+            ("snowpack init", "Initialize workspace (packages.typ + report.typ + bib)"),
+            ("snowpack report.md", "Compile report.md -> report.pdf"),
+            ("snowpack assemble chapters", "Assemble chapters/*.md -> report.md"),
+            ("snowpack deck.md -m slides -w", "Live watch 16:9 presentation"),
+            ("snowpack main.typ -w", "Direct Typst compilation with live reload"),
+        ],
+    )
 
 
 USAGE = get_usage()
