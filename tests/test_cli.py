@@ -1,0 +1,87 @@
+"""Tests for Snowpack CLI parsing and execution routing."""
+
+from pathlib import Path
+
+from snowpack import __version__
+from snowpack.cli import main
+
+
+def test_cli_version(capsys):
+    ret = main(["--version"])
+    assert ret == 0
+    captured = capsys.readouterr()
+    assert f"v{__version__}" in captured.out
+
+
+def test_cli_help(capsys):
+    ret = main(["--help"])
+    assert ret == 0
+    captured = capsys.readouterr()
+    assert "Polyglot Document & Presentation Compiler" in captured.out
+    assert "Operating Modes:" in captured.out
+
+
+def test_cli_init(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    ret = main(["init"])
+    assert ret == 0
+    assert (tmp_path / "report.typ").exists()
+    assert (tmp_path / "packages.typ").exists()
+    assert (tmp_path / "library.bib").exists()
+
+
+def test_cli_new(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    ret = main(["new", "slides"])
+    assert ret == 0
+    assert (tmp_path / "slides.typ").exists()
+
+
+def test_cli_assemble_dispatch(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    ch = tmp_path / "chapters"
+    ch.mkdir()
+    (ch / "ch1.md").write_text("# Chapter 1", encoding="utf-8")
+
+    ret = main(["assemble", "chapters", "-m", "report", "--title", "CLI Test"])
+    assert ret == 0
+    out_file = tmp_path / "report.md"
+    assert out_file.exists()
+    content = out_file.read_text(encoding="utf-8")
+    assert 'title: "CLI Test"' in content
+
+
+def test_cli_dashboard_no_args(tmp_path: Path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    ret = main([])
+    assert ret == 0
+    captured = capsys.readouterr()
+    assert "SNOWPACK DOCUMENT & PRESENTATION COMPILER" in captured.out
+
+
+def test_cli_interactive_hub_exit(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("sys.stdin.isatty", lambda: True)
+    from snowpack.ui import ui
+
+    monkeypatch.setattr(ui, "select", lambda title, options: "exit")
+    ret = main([])
+    assert ret == 0
+
+
+def test_cli_interactive_hub_assemble(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    ch = tmp_path / "chapters"
+    ch.mkdir()
+    (ch / "ch1.md").write_text("# Section 1", encoding="utf-8")
+
+    monkeypatch.setattr("sys.stdin.isatty", lambda: True)
+    from snowpack.ui import ui
+
+    monkeypatch.setattr(ui, "select", lambda title, options: "assemble")
+    monkeypatch.setattr(ui, "prompt", lambda title, default: default)
+    monkeypatch.setattr(ui, "confirm", lambda title, default: False)
+
+    ret = main([])
+    assert ret == 0
+    assert (tmp_path / "report.md").exists()
