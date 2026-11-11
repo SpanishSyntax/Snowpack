@@ -37,15 +37,15 @@ def test_build_latex_entry_document_paper(tmp_path: Path):
     fm = {
         "title": "Observer Design & Verification",
         "author": "Dr. Smith",
-        "dependency": "TU Delft",
-        "email": "smith@tudelft.nl",
+        "dependency": "Systems & Control Institute",
+        "email": "smith@example.com",
         "abstract": "This is the paper abstract.",
         "keywords": "Control, Estimation",
     }
     entry = build_latex_entry_document(fm, "paper", "body.tex", tmp_path)
     assert r"\documentclass[10pt, journal, compsoc]{IEEEtran}" in entry
     assert r"\title{Observer Design \& Verification}" in entry
-    assert r"The author is with the TU Delft (e-mail: smith@tudelft.nl)" in entry
+    assert r"The author is with the Systems \& Control Institute (e-mail: smith@example.com)" in entry
     assert r"\begin{abstract}" in entry
     assert r"\begin{IEEEkeywords}" in entry
     assert r"\input{body.tex}" in entry

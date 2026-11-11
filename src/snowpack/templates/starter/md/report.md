@@ -142,7 +142,7 @@ def process_metrics(dataset: list[dict]) -> dict:
 
 ## Links & References
 
-- **Standard Link:** [TU Delft Official Portal](https://www.tudelft.nl)
+- **Standard Link:** [Academic Portal](https://example.com)
 - **Automatic Link:** [https://github.com](https://github.com)
 - **Relative Anchor:** [Jump to Mathematical Formulations](https://www.google.com/search?q=%23mathematical-formulations)
 - **Reference-style Link:** Learn more about [Typst](https://www.google.com/search?q=%5Bhttps%3A%2F%2Ftypst.app%2Fdocs%2F%5D%28https%3A%2F%2Ftypst.app%2Fdocs%2F%29) or check the [Pandoc Manual](https://www.google.com/search?q=%5Bhttps%3A%2F%2Fpandoc.org%2FMANUAL.html%5D%28https%3A%2F%2Fpandoc.org%2FMANUAL.html%29).

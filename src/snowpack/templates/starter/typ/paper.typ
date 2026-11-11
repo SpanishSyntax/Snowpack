@@ -103,7 +103,7 @@
       department: [__DEPENDENCY__],
       organization: [Delft University of Technology],
       location: [Delft, Netherlands],
-      email: "author@tudelft.nl",
+      email: "author@example.com",
     ),
   ),
   abstract: [
