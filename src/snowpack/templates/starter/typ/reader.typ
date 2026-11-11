@@ -9,7 +9,7 @@
   title: "__TITLE__",
   subtitle: "__SUBTITLE__",
   course-code: "SC-DEEP",
-  institution: "TU Delft • MSc Systems & Control",
+  institution: "Systems & Control Institute • Academic Series",
   edition: "Comprehensive Companion Edition",
   toc: true,
 )

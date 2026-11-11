@@ -70,6 +70,8 @@ def list_available_templates(
         ("report", "report"): "Minimal clean sans-serif engineering report (A4/Letter)",
         ("report", "default"): "Minimal clean sans-serif engineering report (A4/Letter)",
         ("report", "executive"): "Executive decision memo, KPI scorecards & strategic brief",
+        ("report", "memo"): "Executive decision memo & technical brief powered by Floe",
+        ("report", "cheatsheet"): "Multi-column high-density closed-book exam formula reference sheet powered by Floe",
         ("slides", "slides"): "16:9 widescreen presentation (Apple Keynote-style split-hero cards)",
         ("slides", "default"): "16:9 widescreen presentation (Apple Keynote-style split-hero cards)",
         ("slides", "lecture"): "Academic chalkboard / lecture presentation theme",
@@ -152,7 +154,10 @@ def resolve_document_specs(
         resolved_preset = clean
     elif clean in ("executive", "memo"):
         mode_hint = "report"
-        resolved_preset = "executive"
+        resolved_preset = "memo"
+    elif clean in ("cheatsheet", "cheat-sheet", "cheat"):
+        mode_hint = "report"
+        resolved_preset = "cheatsheet"
     else:
         mode_hint = clean
 
@@ -217,6 +222,8 @@ def resolve_document_specs(
     # Determine default destination filename
     if "." in mode_hint:
         filename = mode_hint
+    elif clean in ("memo", "cheatsheet", "reader", "executive"):
+        filename = f"{clean}.{fmt}"
     else:
         filename = f"{mode}.{fmt}"
 

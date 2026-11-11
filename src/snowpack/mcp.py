@@ -441,6 +441,7 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
             mode_filter = str(args.get("mode", "")).strip() or None
             templates = list_available_templates(format_filter=fmt_filter, mode_filter=mode_filter)
             packages = [
+                {"name": "floe", "version": "0.1.0", "role": "Floe design system (@local/floe:0.1.0): tokenized primitives, pedagogical callouts & master presets"},
                 {"name": "cetz", "version": "0.5.2", "role": "TikZ-style 2D/3D vector canvas & coordinate plotting"},
                 {"name": "fletcher", "version": "0.5.8", "role": "Commutative diagrams, control flowcharts, state machines"},
                 {"name": "physica", "version": "0.9.8", "role": "Advanced mathematics, matrix calculus, tensors & Dirac bra-kets"},
@@ -449,12 +450,40 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
                 {"name": "unify", "version": "0.7.0", "role": "SI physical unit and measurement formatting"},
                 {"name": "merman", "version": "0.1.0", "role": "Mermaid diagram and sequence chart rendering"},
             ]
+            floe_manifest = None
+            floe_json_path = Path.home() / ".local" / "share" / "typst" / "packages" / "local" / "floe" / "0.1.0" / "floe.json"
+            floe_dir = floe_json_path.parent.resolve() if floe_json_path.parent.exists() else None
+            if floe_dir and floe_dir.is_dir():
+                generator_script = floe_dir / "scripts" / "generate_schema.py"
+                # Auto-regenerate floe.json if missing or out-of-date compared to .typ source files
+                should_regen = not floe_json_path.is_file()
+                if not should_regen and generator_script.is_file():
+                    json_mtime = floe_json_path.stat().st_mtime
+                    for typ_file in floe_dir.rglob("*.typ"):
+                        if typ_file.stat().st_mtime > json_mtime:
+                            should_regen = True
+                            break
+                if should_regen and generator_script.is_file():
+                    try:
+                        import subprocess
+                        subprocess.run([sys.executable, str(generator_script)], cwd=str(floe_dir), timeout=5.0, capture_output=True)
+                    except Exception:
+                        pass
+
+                if floe_json_path.is_file():
+                    try:
+                        with floe_json_path.open("r", encoding="utf-8") as fp:
+                            floe_manifest = json.load(fp)
+                    except Exception:
+                        pass
+
             return {
                 "status": "ok",
                 "count": len(templates),
                 "templates": templates,
                 "modes": ["report", "slides", "paper"],
                 "packages": packages,
+                "floe": floe_manifest,
             }
 
         else:
