@@ -2,11 +2,14 @@
   <img src="assets/banner.png" alt="Deep snowpack fracture line and winter alpine crown" width="100%" />
 </p>
 
-# 📝 Snowpack
+# Snowpack 📝
 
-> **Hermetic Multi-Mode Document & Presentation Compiler (Typst + LaTeX)**
+> Hermetic Multi-Mode Document & Presentation Compiler (Typst + LaTeX)
 
-Snowpack is an opinionated, ultra-fast document compiler that turns standard GitHub Flavored Markdown (GFM), Typst, and LaTeX into publication-grade PDFs, IEEE academic papers, and 16:9 presentation slide decks.
+Snowpack is an opinionated, hermetic document compiler that turns standard GitHub Flavored Markdown (GFM), Typst, and LaTeX into publication-grade PDFs, IEEE academic papers, and 16:9 widescreen presentation slide decks.
+
+[![Documentation](https://img.shields.io/badge/docs-GitHub_Pages-blue.svg)](https://spanishsyntax.github.io/Snowpack)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ---
 
@@ -16,49 +19,57 @@ Snowpack is an opinionated, ultra-fast document compiler that turns standard Git
 
 Each winter season adds fresh snowfall atop the glacier. Over time, immense pressure compresses loose crystals into dense, stratified layers of permanent blue ice.
 
-**Snowpack compresses multi-layered documents into definitive publications:**
-- **Stratified Compilation**: Blends GitHub Flavored Markdown, Typst, and LaTeX into cohesive, publication-grade academic papers, books, and presentation slide decks.
+Snowpack compresses multi-layered technical manuscripts into definitive publications:
+- **Stratified Compilation**: Blends GitHub Flavored Markdown, Typst, and LaTeX into cohesive academic papers, course readers, and presentation slide decks.
 - **Hermetic Build Engine**: Guarantees reproducible PDF output with automated asset resolution, syntax styling, and typographic polish.
 
 ---
 
-## ✨ Features
+## Features
 
-- 🔒 **100% Hermetic & Self-Contained**: Zero host toolchain dependencies. Snowpack packages `pandoc`, `typst`, and `tectonic` inside its Nix closure, guaranteeing identical PDF compilation on any machine.
-- 🎯 **Three Distinct Operating Modes**:
-  - 📄 **`report` (Default)**: Clean minimal sans-serif report layout with Inter, dynamic margins, headers, footers, and callouts (A4/Letter).
-  - 🖥️ **`slides` (16:9 Presentation)**: Ultra-crisp 16:9 widescreen presentation deck (1920×1080) with dark/light themes, slide counters, and slide breaks on `---` or headers.
-  - 📜 **`paper` (IEEE Academic Paper)**: Two-column camera-ready layout with IEEE Roman section numbering (`I.`, `II.`, `A.`), full-width title/abstract/keywords, and serif typography.
-- ⚡ **Multi-Format & Polyglot Engine**:
-  - Compiles **Markdown** via Typst or LaTeX/Tectonic based on frontmatter `engine: typst | latex` (or `--engine`).
-  - Compiles native **`.typ`** files directly with Typst (`typst:report`, `typst:slides`, `typst:paper`).
-  - Compiles native **`.tex`** files directly with Tectonic (`latex:report`, `latex:slides`, `latex:paper`).
-- 📑 **YAML Frontmatter Integration**: Control title, authors, affiliations, operating mode (`mode: slides`), preset (`preset: ieee`), engine (`engine: typst` or `latex`), theme (`theme: dark`), and geometry directly in Markdown frontmatter.
-- 👁️ **Live Watch Mode (`snowpack <doc> -w`)**: Continuous background watcher that detects file saves and automatically re-compiles the PDF in milliseconds.
-- 🤝 **Basecamp Integration**: Scaffolding is completely delegated to [Basecamp](https://github.com/SpanishSyntax/Basecamp) (`basecamp init md:report`, `basecamp init typst:slides`, `basecamp init latex:paper`), providing the full 9-way document scaffolding matrix.
+- **Hermetic Toolchain**: Packages `pandoc`, `typst`, and `tectonic` inside its Nix closure, guaranteeing identical PDF compilation across any host machine.
+- **Three Core Operating Modes**:
+  - `report` (Default): Clean minimal sans-serif report layout with Inter, dynamic margins, headers, footers, and callouts (A4/Letter).
+  - `slides` (16:9 Presentation): High-contrast 16:9 widescreen presentation deck (1920×1080) with dark/light themes and automatic slide pagination.
+  - `paper` (IEEE Academic Paper): Two-column camera-ready layout with IEEE Roman section numbering, full-width abstract banner, and serif typography.
+- **Polyglot Format Engine**:
+  - Compiles Markdown via Typst or LaTeX/Tectonic based on frontmatter `engine: typst | latex` (or `--engine`).
+  - Compiles native `.typ` files directly with Typst (`typst:report`, `typst:slides`, `typst:paper`).
+  - Compiles native `.tex` files directly with Tectonic (`latex:report`, `latex:slides`, `latex:paper`).
+- **YAML Frontmatter Integration**: Control title, authors, affiliations, operating mode, layout presets, engine backends, themes, and geometry directly from Markdown headers.
+- **Live Watch Mode**: Continuous inotify-backed background watcher that detects file saves and automatically recompiles the PDF in milliseconds.
+- **Chapter Assembly**: Collates multi-chapter manuscript directories with natural numerical sorting, path rebasing, and manifest validation.
+- **Basecamp Integration**: Scaffolding is integrated with [Basecamp](https://github.com/SpanishSyntax/Basecamp) (`basecamp init snowpack`).
 
 ---
 
-## 🚀 Quick Start
+## Documentation
 
-1. **Scaffold workspace using Basecamp**:
+Full documentation, architecture deep dives, CLI recipes, and API references are available on the **[Documentation Site](https://spanishsyntax.github.io/Snowpack)**:
+
+- [Getting Started](https://spanishsyntax.github.io/Snowpack/#/getting-started)
+- [Architecture & Compiler Pipeline](https://spanishsyntax.github.io/Snowpack/#/architecture)
+- [CLI Reference & Recipes](https://spanishsyntax.github.io/Snowpack/#/usage)
+- [YAML Frontmatter & API Reference](https://spanishsyntax.github.io/Snowpack/#/api)
+
+---
+
+## Quick Start
+
+### 1. Scaffold Document
+
 ```bash
-# Initialize DevShell + templates (report.typ, slides.typ, paper.typ) + starters
-basecamp init snowpack
-
-# Or drop templates into an existing workspace
-basecamp project snowpack
-
-# Or drop starter leaf documents
-basecamp new snowpack
+# Initialize a starter report document
+snowpack new report --title "Autonomous Exploration Systems" --author "Dr. Alex Rivera"
 ```
 
-2. **Compile with Snowpack**:
+### 2. Compile to PDF
+
 ```bash
 # Auto-discover report.md, slides.md, or paper.md in current directory
 snowpack
 
-# Compile a report
+# Compile a report explicitly
 snowpack report.md
 
 # Compile 16:9 presentation slides with live watch mode
@@ -74,20 +85,23 @@ snowpack report.tex -w
 
 ---
 
-## 💻 CLI Commands & Options
+## CLI Overview
 
 ```text
 Usage:
   snowpack [file] [options]             Build PDF from Markdown, Typst, or LaTeX
   snowpack build [file] [options]       Explicit build command
-  snowpack init [name] [options]        Scaffold starter document and template
+  snowpack new [target] [options]       Scaffold starter document
+  snowpack init [preset] [options]      Initialize complete Snowpack workspace
+  snowpack assemble [dir] [options]     Assemble modular chapters into master Markdown
+  snowpack mcp                          Run Model Context Protocol stdio server
 
 Operating Modes:
   -m, --mode MODE        Document operating mode:
                          • report: Minimal sans-serif document (default, A4/Letter)
                          • slides: 16:9 widescreen presentation (1920x1080)
                          • paper:  Academic paper (IEEE 2-column layout)
-  -p, --preset PRESET    Layout preset (e.g., 'ieee', 'default')
+  -p, --preset PRESET    Layout preset (e.g. 'ieee', 'default')
 
 Options:
   -o, --output PATH      Specify output PDF filename
@@ -97,34 +111,38 @@ Options:
   --root PATH            Typst compilation root directory (default: current directory)
   --font-path PATH       Additional directory containing fonts for Typst
   --open                 Open generated PDF in system viewer after build
-  -f, --force            Overwrite existing files during init without prompting
+  -f, --format FMT       Scaffolding document format: typ (default), md, tex
+  --force                Overwrite existing files during init without prompting
+  -A, --agent            Compact machine/agent friendly output mode
+  --json                 Structured JSON output mode
   --color MODE           Color output mode: auto, always, never (default: auto)
   --no-color             Disable colored output
-  -h, --help             Show this help message and exit
+  -h, --help             Show help message and exit
   -V, -v, --version      Show version information and exit
 ```
 
 ---
 
-## 📄 Frontmatter Formats
+## Frontmatter Formats
 
-Snowpack dynamically configures layout and styling from standard Markdown YAML frontmatter:
+Snowpack configures layout and styling from standard Markdown YAML frontmatter:
 
 ### 1. Presentation Slides (16:9 / 1920×1080)
+
 ```markdown
 ---
 title: "Distributed Swarm Intelligence"
 subtitle: "Real-time Consensus in GPS-Denied Environments"
-author: "Juan José Martínez Guerrero"
-dependency: "TUDelft Systems & Control"
+author: "Alex Rivera"
+affiliation: "Robotics and Controls Laboratory"
 date: "October 2026"
 mode: "slides"
-theme: "dark"          # 'dark' or 'light'
+theme: "dark"
 aspect-ratio: "16-9"
 ---
 
 # Problem Formulation
-- Sensor limitations: $O(t^2)$ drift
+- Sensor limitations: $O(t^2)$ dead-reckoning drift
 - Intermittent peer-to-peer wireless links
 
 ---
@@ -137,32 +155,34 @@ $$
 ```
 
 ### 2. Academic Paper (IEEE 2-Column)
+
 ```markdown
 ---
 title: "Resilient Distributed State Estimation for Autonomous Swarms"
-author: "Juan José Martínez Guerrero, Member, IEEE, and Alex Rivera"
-dependency: "Department of Systems and Control, Delft University of Technology"
-email: "j.j.martinezguerrero@tudelft.nl"
-abstract: "Autonomous micro-aerial vehicle swarms face rapid dead-reckoning drift..."
+author: "Alex Rivera, Member, IEEE, and Jordan Vance"
+affiliation: "Autonomous Systems Laboratory"
+email: "a.rivera@laboratory.org"
+abstract: "Autonomous micro-aerial vehicle swarms face rapid dead-reckoning drift under GPS denial..."
 keywords: "Swarm robotics, distributed factor graphs, ADMM."
 mode: "paper"
 preset: "ieee"
 ---
 
 # Introduction
-Autonomous multi-agent systems require distributed awareness...
+Autonomous multi-agent systems require distributed awareness under degraded communications...
 
 # System Architecture
 Consider an undirected communication graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$...
 ```
 
 ### 3. Report Document (Default)
+
 ```markdown
 ---
 title: "Autonomous Space Exploration Systems"
-author: "Juan José Martínez Guerrero"
-dependency: "TUDelft Systems & Control"
-date: "25/09/2026"
+author: "Alex Rivera"
+affiliation: "Space Systems Group"
+date: "2026-10-15"
 mode: "report"
 ---
 
@@ -172,7 +192,7 @@ Minimal Inter typography with automatic headers, footers, and page counters.
 
 ---
 
-## 🛠️ Home Manager Configuration
+## Home Manager Configuration
 
 Add Snowpack to your `flake.nix`:
 
@@ -201,24 +221,36 @@ Add Snowpack to your `flake.nix`:
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 Snowpack/
-├── flake.nix               # Flake packaging wrapping pandoc, typst, and tectonic
+├── .github/workflows/      # CI/CD and Docs deployment workflows
+├── docs/                   # Docsify documentation site
+│   ├── assets/             # Documentation visual assets & banners
+│   ├── index.html          # Docsify single-page application
+│   ├── _sidebar.md         # Documentation navigation tree
+│   ├── getting-started.md  # Installation & quick start
+│   ├── architecture.md     # Compiler pipeline & internals
+│   ├── usage.md            # CLI recipes & assembly guides
+│   └── api.md              # Frontmatter schema & Python API
+├── flake.nix               # Nix packaging wrapping pandoc, typst, and tectonic
 ├── pyproject.toml          # PEP 517 / 621 Python packaging
 ├── LICENSE                 # MIT License
-├── README.md               # Documentation & usage guide
+├── README.md               # Repository landing page
 └── src/
     └── snowpack/
-        ├── __init__.py     # Package metadata
-        ├── __main__.py     # python -m snowpack entrypoint
-        ├── cli.py          # Multi-mode compiler pipeline & watch daemon
-        └── ui.py           # Interactive CLI styling, spinners & menus
+        ├── assembler.py    # Multi-chapter collation & natural sorting
+        ├── cli.py          # Command line router & status dashboard
+        ├── compiler.py     # Subprocess runner for Typst, Tectonic & Pandoc
+        ├── discovery.py    # Document detection & template resolution
+        ├── frontmatter.py  # YAML frontmatter normalization
+        ├── mcp.py          # Model Context Protocol stdio server
+        └── watcher.py      # File system watch daemon
 ```
 
 ---
 
-## 📜 License
+## License
 
-MIT © SpanishSyntax
+MIT © [SpanishSyntax](https://github.com/SpanishSyntax)
