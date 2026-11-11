@@ -1,8 +1,8 @@
 // ============================================================================
 // SNOWPACK CLOSED-BOOK EXAM CHEATSHEET (Typst 0.14+)
-// High-Density Multi-Column Reference Powered by Floe (@local/floe:0.1.0)
+// High-Density Multi-Column Reference Powered by Floe (@local/floe:0.2.1)
 // ============================================================================
-#import "@local/floe:0.1.0": *
+#import "@local/floe:0.2.1": *
 
 #show: cheatsheet.with(
   title: "__TITLE__",

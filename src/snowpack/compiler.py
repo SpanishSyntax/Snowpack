@@ -89,7 +89,7 @@ def setup_typst_package_env(
     compile_root: Path,
     user_cfg: dict[str, Any] | None = None,
 ) -> dict[str, str]:
-    """Ensures @local/floe:0.1.0 (or overrides) is resolved either from:
+    """Ensures @local/floe:0.2.1 (or overrides) is resolved either from:
     1. Project override in snowpack.toml ([packages] floe = "path")
     2. Local project components directory (components/)
     3. System local packages directory (~/.local/share/typst/packages/local)
@@ -117,7 +117,7 @@ def setup_typst_package_env(
 
     if local_target and local_target.exists():
         shadow_dir = compile_root / ".snowpack" / "packages"
-        pkg_version_dir = shadow_dir / "local" / pkg_name / "0.1.0"
+        pkg_version_dir = shadow_dir / "local" / pkg_name / "0.2.1"
         try:
             pkg_version_dir.parent.mkdir(parents=True, exist_ok=True)
             if pkg_version_dir.is_symlink() or pkg_version_dir.exists():

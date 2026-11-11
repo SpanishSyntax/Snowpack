@@ -1,9 +1,9 @@
 // ============================================================================
 // SNOWPACK DEEP-READER & STUDY COMPANION TEMPLATE (Typst 0.14+)
 // Strictly Single-Column Long-Format Textbook & Companion Architecture
-// Uses Floe (@local/floe:0.1.0) for Composable Design System & Pedagogical Atoms
+// Uses Floe (@local/floe:0.2.1) for Composable Design System & Pedagogical Atoms
 // ============================================================================
-#import "@local/floe:0.1.0": *
+#import "@local/floe:0.2.1": *
 
 #show: textbook.with(
   title: "__TITLE__",

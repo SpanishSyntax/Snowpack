@@ -441,7 +441,7 @@ def execute_tool(name: str, arguments: dict[str, Any] | None = None) -> dict[str
             mode_filter = str(args.get("mode", "")).strip() or None
             templates = list_available_templates(format_filter=fmt_filter, mode_filter=mode_filter)
             packages = [
-                {"name": "floe", "version": "0.1.0", "role": "Floe design system (@local/floe:0.1.0): tokenized primitives, pedagogical callouts & master presets"},
+                {"name": "floe", "version": "0.2.1", "role": "Floe design system (@local/floe:0.2.1): tokenized primitives, pedagogical callouts & master presets"},
                 {"name": "cetz", "version": "0.5.2", "role": "TikZ-style 2D/3D vector canvas & coordinate plotting"},
                 {"name": "fletcher", "version": "0.5.8", "role": "Commutative diagrams, control flowcharts, state machines"},
                 {"name": "physica", "version": "0.9.8", "role": "Advanced mathematics, matrix calculus, tensors & Dirac bra-kets"},

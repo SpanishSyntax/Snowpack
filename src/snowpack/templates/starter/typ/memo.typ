@@ -1,8 +1,8 @@
 // ============================================================================
 // SNOWPACK EXECUTIVE DECISION MEMO (Typst 0.14+)
-// Powered by Floe Design System (@local/floe:0.1.0)
+// Powered by Floe Design System (@local/floe:0.2.1)
 // ============================================================================
-#import "@local/floe:0.1.0": *
+#import "@local/floe:0.2.1": *
 
 #show: memo.with(
   title: "__TITLE__",
