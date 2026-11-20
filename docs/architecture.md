@@ -21,10 +21,10 @@ flowchart TD
     RouteEngine -->|"engine: typst (Default)"| PandocAST["Pandoc Typst AST Writer"]
     RouteEngine -->|"engine: tectonic"| PandocTeX["Pandoc LaTeX AST Writer"]
     
-    PandocAST --> ApplyTypst["Inject Mode Templates\n(report / slides / paper)"]
+    PandocAST --> ApplyTypst["Inject Mode Templates (report / slides / paper)"]
     ApplyTypst --> TypstCompile["typst compile --root ."]
     
-    PandocTeX --> ApplyTeX["Inject LaTeX Preamble\n(IEEE / Report / Beamer)"]
+    PandocTeX --> ApplyTeX["Inject LaTeX Preamble (IEEE / Report / Beamer)"]
     ApplyTeX --> TectonicCompile["tectonic --chatter minimal"]
     
     TypstDirect --> OutputPDF["Target PDF Artifact"]
@@ -81,11 +81,11 @@ Snowpack provides an integrated assembly subsystem (`snowpack assemble [dir]`):
 
 ```mermaid
 flowchart LR
-    Dir["Chapter Directory\n(ch01.md, ch02.md, ...)"] --> Scanner["Natural Sort Key\nOrder Resolution"]
-    Manifest["Optional Manifest\n(manifest.yaml)"] -.-> Scanner
-    Scanner --> Merger["Concatenate Sections\nwith Normalized Headings"]
-    Merger --> AssetRebase["Rebase Relative Asset Paths\n(e.g., assets/fig1.png)"]
-    AssetRebase --> Master["Master Document\n(master.md / master.typ)"]
+    Dir["Chapter Directory (ch01.md, ch02.md, ...)"] --> Scanner["Natural Sort Key Order Resolution"]
+    Manifest["Optional Manifest (manifest.yaml)"] -.-> Scanner
+    Scanner --> Merger["Concatenate Sections with Normalized Headings"]
+    Merger --> AssetRebase["Rebase Relative Asset Paths (assets/fig1.png)"]
+    AssetRebase --> Master["Master Document (master.md / master.typ)"]
 ```
 
 1. **Natural Sorting**: File ordering respects human numerical conventions (`ch1.md`, `ch2.md`, ..., `ch10.md` rather than standard alphabetical sorting where `ch10.md` precedes `ch2.md`).
