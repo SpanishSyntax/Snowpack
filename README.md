@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/banner.png" alt="Deep snowpack fracture line and winter alpine crown" width="100%" />
-</p>
+<img src="assets/banner.png" alt="Deep snowpack fracture line and winter alpine crown" width="100%" />
 
 # Snowpack 📝
 
